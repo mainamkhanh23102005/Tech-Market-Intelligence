@@ -1,0 +1,10 @@
+{
+  "name": "tech-market-intelligence",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Tech Market Intelligence monorepo foundation",
+  "engines": {
+    "node": ">=22.22.0 <23",
+    "npm": ">=10 <12"
+  }
+}

@@ -2,10 +2,10 @@
 
 **Living Technical Paper / Project Research Document**
 
-- **Project status:** M0 Foundation completed
-- **Current phase:** pre-M1 / Canonical Corpus Ingestion
-- **Last updated:** 2026-09-20
-- **Authority:** approved repository plan, milestone checklist, architecture decisions, and implemented M0 artifacts
+- **Project status:** M1 Canonical Corpus completed
+- **Current phase:** M1 verification complete
+- **Last updated:** 2026-09-21
+- **Authority:** approved repository plan, milestone checklist, architecture decisions, and verified M0/M1 artifacts
 
 This document uses three implementation states:
 
@@ -420,9 +420,9 @@ M0 Foundation is completed in the current working tree. Existing artifacts inclu
 - ADR-002, **PostgreSQL as Initial Source of Truth**;
 - architecture, engineering-contract, Definition of Done, configuration, and secret-handling documentation.
 
-The latest M0 verification recorded clean Ruff formatting and linting, clean strict mypy checking, eight passing tests, and a successful wheel build. A third-party deprecation warning from Starlette’s test client and AnyIO is known. The current developer machine has Node 24 installed while the project pins Node 22; no Node dependency or frontend exists yet.
+M1 verification against PostgreSQL 16.4 completed on 2026-09-21. An empty database migrated to Alembic revision `0001_m1_corpus`, producing source, permission, ingestion-run, raw-record, job, snapshot, processing-attempt, and processing-failure tables. Fourteen non-integration tests and two PostgreSQL integration tests passed. The integration scenarios verified CSV import and identical replay, JSON changed-content import and identical replay behavior through the shared idempotent pipeline, stable logical job identity, additive snapshots, terminal partial-failure persistence, retryable transient-failure persistence and replay recovery, and equivalent provenance lookup by Job ID and JobSnapshot ID. The fixture sequence produced four logical jobs, five raw records, five snapshots, and two terminal failures; the first CSV import reported four accepted records, one duplicate, and one failure, its replay reported four accepted records, four duplicates, and one failure, and changed JSON reported two accepted records with no duplicates or failures.
 
-No M1 ingestion or data functionality has been implemented. There is no PostgreSQL schema, Alembic migration environment, source registry implementation, file adapter, job entity, raw record, or job snapshot.
+Measured ingestion on separate empty migrated databases accepted all records without duplicates or failures. The 1,000-record workload completed in 25.8627 seconds at 38.6658 records/second with 2,123,734 bytes peak traced Python memory. The 10,000-record workload completed in 278.8079 seconds at 35.8670 records/second with 12,964,472 bytes peak traced Python memory. Results are machine-specific; `tracemalloc` excludes PostgreSQL server memory and does not characterize cold/warm cache behavior. Ruff format and lint checks, strict mypy, wheel build, migration/schema verification, and Git whitespace validation passed. Known warnings are Starlette/AnyIO and Alembic configuration deprecations. Automated backoff/scheduling is intentionally absent; M1 verifies retryable classification plus explicit replay recovery.
 
 ## 19. Expected Technical Contributions
 

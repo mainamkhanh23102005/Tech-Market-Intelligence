@@ -4,7 +4,7 @@ Evidence-backed technical job-market intelligence platform. Deterministic stored
 
 ## Current milestone
 
-M0 Foundation only. Repository contains engineering contracts, typed API/provenance schemas, configuration validation, one API health endpoint, tests, and CI. Job ingestion, taxonomy, analytics, search, market UI, AI, profiles, databases, and external infrastructure are not implemented.
+M1 Canonical Corpus. Repository contains bounded CSV/JSON ingestion, deterministic identities and snapshots, PostgreSQL schema/migrations, duplicate and failure reporting, historical provenance CLI, tests, and benchmark tooling. Taxonomy, analytics, search, market UI, AI, profiles, and live source adapters are not implemented.
 
 ## Supported toolchain
 
@@ -36,13 +36,25 @@ Copy-Item .env.example .env
 .\scripts\tasks.ps1 ci
 ```
 
-Integration, evaluation, and Compose gates are not declared in M0 because no corresponding implementation exists.
+`test` and `test-unit` exclude PostgreSQL integration tests. Set `TEST_DATABASE_URL` to an isolated migrated test database before `test-integration`; set `DATABASE_URL` before `migrate` or CLI use. `BENCHMARK_DATABASE_URL` must identify a separate empty migrated benchmark database.
+
+```powershell
+.\scripts\tasks.ps1 test-unit
+.\scripts\tasks.ps1 test-integration
+.\scripts\tasks.ps1 migrate
+.\.venv\Scripts\tech-market-ingestion.exe import data\fixtures\jobs.csv --manifest data\manifests\synthetic-jobs.json
+.\.venv\Scripts\tech-market-ingestion.exe provenance --job-id <uuid>
+.\.venv\Scripts\tech-market-ingestion.exe provenance --snapshot-id <uuid>
+```
 
 ## Structure
 
 - `apps/api/`: minimal FastAPI process scaffold
+- `packages/backend/`: M1 ingestion, persistence, and provenance implementation
 - `packages/contracts/`: typed API and provenance contracts
-- `tests/`: configuration, contract, and smoke tests
+- `migrations/`: explicit frozen PostgreSQL Alembic operations
+- `benchmarks/`: deterministic workload generator and ingestion measurement runner
+- `tests/`: contract, unit, and isolated PostgreSQL integration tests
 - `docs/`: architecture, ADRs, configuration, and engineering policy
 - `tasks/`: approved plan and milestone checklist
 
@@ -54,4 +66,4 @@ Integration, evaluation, and Compose gates are not declared in M0 because no cor
 - ADR-001: `docs/adr/ADR-001-modular-monolith-first.md`
 - ADR-002: `docs/adr/ADR-002-postgresql-source-of-truth.md`
 
-Development remains local-first and approximately $0. No service container, cloud resource, or paid provider is required for M0.
+Development remains local-first and approximately $0. M1 PostgreSQL can use an existing native service or optional Compose dependency; commands never create or select an unknown database implicitly.

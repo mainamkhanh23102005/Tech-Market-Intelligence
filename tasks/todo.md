@@ -30,13 +30,13 @@ Implementation must not begin until `tasks/plan.md` receives human approval. Eac
 
 ## M1 — Canonical Corpus
 
-- [ ] M1.1 Define source registry, permission manifest, IDs, snapshot, and ingestion state contracts.
-- [ ] M1.2 Add PostgreSQL source/raw/job/snapshot schema and migration tests.
-- [ ] M1.3 Build validated CSV adapter over license-safe fixtures.
-- [ ] M1.4 Build JSON adapter using same canonical pipeline.
-- [ ] M1.5 Add deterministic exact deduplication, replacement, retry, and failure reporting.
-- [ ] M1.6 Add provenance inspection API/CLI.
-- [ ] M1.7 Benchmark throughput and peak memory on recorded 1k/10k fixture workloads.
+- [x] M1.1 Define source registry, permission manifest, IDs, snapshot, and ingestion state contracts.
+- [x] M1.2 Add PostgreSQL source/raw/job/snapshot schema and migration tests.
+- [x] M1.3 Build validated CSV adapter over license-safe fixtures.
+- [x] M1.4 Build JSON adapter using same canonical pipeline.
+- [x] M1.5 Add deterministic exact deduplication, replacement, retry, and failure reporting.
+- [x] M1.6 Add provenance inspection API/CLI.
+- [x] M1.7 Benchmark throughput and peak memory on recorded 1k/10k fixture workloads.
 
 Acceptance: replay creates no duplicate logical jobs; changed input creates new snapshot; every accepted job resolves to raw hash/source.
 

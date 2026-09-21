@@ -12,8 +12,13 @@ dependencies = [
   "fastapi==0.115.12",
   "pydantic==2.11.5",
   "pydantic-settings==2.9.1",
+  "psycopg[binary]==3.2.9",
+  "sqlalchemy==2.0.41",
   "uvicorn==0.34.3",
 ]
+
+[project.scripts]
+tech-market-ingestion = "tech_market_backend.ingestion.cli:main"
 
 [project.optional-dependencies]
 dev = [
@@ -28,12 +33,14 @@ dev = [
 packages = [
   "apps/api/src/tech_market_api",
   "packages/contracts/src/tech_market_contracts",
+  "packages/backend/src/tech_market_backend",
 ]
 
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers"
 testpaths = ["tests"]
-pythonpath = ["apps/api/src", "packages/contracts/src"]
+pythonpath = ["apps/api/src", "packages/contracts/src", "packages/backend/src"]
+markers = ["integration: requires isolated PostgreSQL"]
 
 [tool.ruff]
 target-version = "py312"
@@ -50,8 +57,8 @@ line-ending = "lf"
 [tool.mypy]
 python_version = "3.12"
 strict = true
-mypy_path = ["apps/api/src", "packages/contracts/src"]
-packages = ["tech_market_api", "tech_market_contracts"]
+mypy_path = ["apps/api/src", "packages/contracts/src", "packages/backend/src"]
+packages = ["tech_market_api", "tech_market_contracts", "tech_market_backend"]
 
 [tool.hatch.envs.default]
 features = ["dev"]

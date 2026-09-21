@@ -1,0 +1,6 @@
+source_id,canonical_url,title,company,location,description,observed_at,metadata
+job-001,https://example.invalid/jobs/001,Backend Engineer,Synthetic Systems,Hanoi,Build deterministic services.,2026-01-01T00:00:00Z,"{""cohort"":""synthetic""}"
+job-002,https://example.invalid/jobs/002,Data Engineer,Example Fabricators,Remote,Build bounded data pipelines.,2026-01-02T00:00:00Z,"{""cohort"":""synthetic""}"
+job-001,https://example.invalid/jobs/001,Backend Engineer,Synthetic Systems,Hanoi,Build deterministic services.,2026-01-01T00:00:00Z,"{""cohort"":""synthetic""}"
+,https://example.invalid/jobs/003,Platform Engineer,Sample Machines,,Operate PostgreSQL safely.,2026-01-03T00:00:00Z,"{}"
+bad-001,,Broken Record,Synthetic Systems,Hanoi,,2026-01-04T00:00:00Z,"{}"

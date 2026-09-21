@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0)]
-    [ValidateSet("format", "format-check", "lint", "typecheck", "test", "build", "ci")]
+    [ValidateSet("format", "format-check", "lint", "typecheck", "test", "test-unit", "test-integration", "build", "migrate", "ci")]
     [string]$Task = "ci"
 )
 
@@ -23,7 +23,13 @@ switch ($Task) {
     "format-check" { Invoke-Step "format-check" { & $python -m ruff format --check . } }
     "lint" { Invoke-Step "lint" { & $python -m ruff check . } }
     "typecheck" { Invoke-Step "typecheck" { & $python -m mypy } }
-    "test" { Invoke-Step "test" { & $python -m pytest } }
+    "test" { Invoke-Step "test" { & $python -m pytest -m "not integration" } }
+    "test-unit" { Invoke-Step "test-unit" { & $python -m pytest -m "not integration" } }
+    "test-integration" { Invoke-Step "test-integration" { & $python -m pytest -m integration } }
+    "migrate" {
+        if (-not $env:DATABASE_URL) { throw "DATABASE_URL is required" }
+        Invoke-Step "migrate" { & $python -m alembic upgrade head }
+    }
     "build" {
         if (Test-Path -LiteralPath (Join-Path $PSScriptRoot "..\dist")) {
             Remove-Item -Recurse -Force -LiteralPath (Join-Path $PSScriptRoot "..\dist")
@@ -34,7 +40,7 @@ switch ($Task) {
         Invoke-Step "format-check" { & $python -m ruff format --check . }
         Invoke-Step "lint" { & $python -m ruff check . }
         Invoke-Step "typecheck" { & $python -m mypy }
-        Invoke-Step "test" { & $python -m pytest }
+        Invoke-Step "test-unit" { & $python -m pytest -m "not integration" }
         if (Test-Path -LiteralPath (Join-Path $PSScriptRoot "..\dist")) {
             Remove-Item -Recurse -Force -LiteralPath (Join-Path $PSScriptRoot "..\dist")
         }

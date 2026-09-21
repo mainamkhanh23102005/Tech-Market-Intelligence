@@ -1,0 +1,22 @@
+[
+  {
+    "source_id": "job-001",
+    "canonical_url": "https://example.invalid/jobs/001",
+    "title": "Backend Engineer",
+    "company": "Synthetic Systems",
+    "location": "Hanoi",
+    "description": "Build deterministic services, changed.",
+    "observed_at": "2026-02-01T00:00:00Z",
+    "metadata": {"cohort": "synthetic"}
+  },
+  {
+    "source_id": "job-004",
+    "canonical_url": "https://example.invalid/jobs/004",
+    "title": "Database Engineer",
+    "company": "Example Fabricators",
+    "location": "Remote",
+    "description": "Maintain immutable records.",
+    "observed_at": "2026-02-02T00:00:00Z",
+    "metadata": {"cohort": "synthetic"}
+  }
+]

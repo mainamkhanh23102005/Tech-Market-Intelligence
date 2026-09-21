@@ -43,11 +43,11 @@
 - Evaluation: labeled quality benchmarks; starts with relevant extraction/retrieval milestone.
 - End-to-end: critical user workflows only after UI exists.
 
-M0 requires unit and contract tests only. Empty integration/evaluation commands are forbidden.
+M1 requires unit and contract tests on every machine. `test-integration` requires caller-provided `TEST_DATABASE_URL` naming an isolated PostgreSQL database; absence skips database tests rather than touching an unknown database.
 
 ## Migration policy
 
-- Alembic is selected but no migration environment or database schema exists in M0.
+- Alembic migrations use explicit frozen operations; runtime SQLAlchemy metadata is not invoked by revision files.
 - M1 migrations must be ordered, immutable after shared use, and tested forward from empty database.
 - Schema changes must be backward-compatible during deployment where old and new code can overlap.
 - Destructive changes require expand/migrate/contract sequence, backup/restore consideration, and ADR when significant.
@@ -84,4 +84,4 @@ A task is done only when:
 
 ## Quality commands
 
-`format-check`, `lint`, `typecheck`, `test`, and `build` perform real work. `ci` runs all five. Integration, evaluation, and Compose checks will be added only when real artifacts exist.
+`format-check`, `lint`, `typecheck`, `test-unit`, `test-integration`, `build`, and `migrate` perform real work. `ci` runs service-independent formatting, lint, strict typing, unit/contract tests, and build. Database migration and integration gates require explicit isolated database URLs.

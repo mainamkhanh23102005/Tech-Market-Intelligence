@@ -4,7 +4,7 @@ Evidence-backed technical job-market intelligence platform. Deterministic stored
 
 ## Current milestone
 
-M1 Canonical Corpus. Repository contains bounded CSV/JSON ingestion, deterministic identities and snapshots, PostgreSQL schema/migrations, duplicate and failure reporting, historical provenance CLI, tests, and benchmark tooling. Taxonomy, analytics, search, market UI, AI, profiles, and live source adapters are not implemented.
+M2 Normalization and Skill Intelligence. Repository contains M1 corpus ingestion plus versioned role, seniority, location, and skill normalization; deterministic precompiled alias/regex extraction with source offsets; ambiguity/abstention and persisted candidate-review evidence; versioned parent/child taxonomy relationships; snapshot-bound persisted outputs; and a reproducible 24-example synthetic CC0 evaluation. Analytics, search, market UI, AI, profiles, and live source adapters are not implemented.
 
 ## Supported toolchain
 
@@ -19,6 +19,7 @@ M1 Canonical Corpus. Repository contains bounded CSV/JSON ingestion, determinist
 py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --upgrade pip==25.0.1
 .\.venv\Scripts\python.exe -m pip install --require-hashes -r requirements.lock
+.\.venv\Scripts\python.exe -m pip install --no-deps -e .
 Copy-Item .env.example .env
 ```
 
@@ -32,6 +33,10 @@ Copy-Item .env.example .env
 .\scripts\tasks.ps1 lint
 .\scripts\tasks.ps1 typecheck
 .\scripts\tasks.ps1 test
+.\scripts\tasks.ps1 test-evaluation
+.\scripts\tasks.ps1 evaluation
+.\.venv\Scripts\tech-market-evaluation.exe
+.\.venv\Scripts\python.exe -m tech_market_backend.taxonomy.evaluation_cli
 .\scripts\tasks.ps1 build
 .\scripts\tasks.ps1 ci
 ```
@@ -50,7 +55,7 @@ Copy-Item .env.example .env
 ## Structure
 
 - `apps/api/`: minimal FastAPI process scaffold
-- `packages/backend/`: M1 ingestion, persistence, and provenance implementation
+- `packages/backend/`: M1 corpus plus M2 normalization, taxonomy, extraction, persistence, and evaluation implementation
 - `packages/contracts/`: typed API and provenance contracts
 - `migrations/`: explicit frozen PostgreSQL Alembic operations
 - `benchmarks/`: deterministic workload generator and ingestion measurement runner
@@ -65,5 +70,8 @@ Copy-Item .env.example .env
 - Configuration and secrets: `docs/configuration/secrets.md`
 - ADR-001: `docs/adr/ADR-001-modular-monolith-first.md`
 - ADR-002: `docs/adr/ADR-002-postgresql-source-of-truth.md`
+- ADR-003: `docs/adr/ADR-003-canonical-identities-and-snapshots.md`
+- ADR-004: `docs/adr/ADR-004-source-permission-and-retention.md`
+- ADR-005: `docs/adr/ADR-005-taxonomy-versioning-and-extraction-authority.md`
 
-Development remains local-first and approximately $0. M1 PostgreSQL can use an existing native service or optional Compose dependency; commands never create or select an unknown database implicitly.
+Development remains local-first and approximately $0. PostgreSQL can use an existing native service or optional Compose dependency; commands never create or select an unknown database implicitly. Canonical verification commands are `.\scripts\tasks.ps1 test`, `.\scripts\tasks.ps1 test-integration`, and `.\scripts\tasks.ps1 test-evaluation`; current verified totals are 66 non-integration tests, 9 PostgreSQL integration tests, and 6 evaluation-suite tests. The full integration suite ran against the isolated `tech_market_test` database, and a fresh migration reached Alembic head `0002_m2_normalization`.

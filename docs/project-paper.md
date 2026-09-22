@@ -2,10 +2,10 @@
 
 **Living Technical Paper / Project Research Document**
 
-- **Project status:** M1 Canonical Corpus completed
-- **Current phase:** M1 verification complete
-- **Last updated:** 2026-09-21
-- **Authority:** approved repository plan, milestone checklist, architecture decisions, and verified M0/M1 artifacts
+- **Project status:** M2 Normalization and Skill Intelligence complete
+- **Current phase:** M2 verification complete, including distinct exact-alias and reviewed regex extraction methods
+- **Last updated:** 2026-09-22
+- **Authority:** approved repository plan, milestone checklist, architecture decisions, and verified M0/M1/M2 artifacts
 
 This document uses three implementation states:
 
@@ -122,8 +122,10 @@ Profile processing is not the product center, an employability predictor, or a h
 | `Seniority` | Normalized seniority classification with method and uncertainty. |
 | `Location` | Normalized location and remote-work dimensions. |
 | `Skill` | Stable canonical skill identity. |
-| `SkillAlias` | Versioned spelling, abbreviation, locale, boundary, and ambiguity rule. |
+| `SkillAlias` | Versioned spelling, abbreviation, locale, matching mode, case sensitivity, boundary rule, ambiguity status, and curation evidence. |
+| `SkillRelationship` | Versioned parent/child edge with a constrained relationship type. |
 | `JobSkill` | Evidence linking a snapshot to a skill, including source span, method, confidence, and taxonomy version. |
+| `SkillCandidate` | Pending, accepted, or rejected review evidence for an ambiguous extracted mention. |
 | `CorpusSnapshot` | Immutable definition of observations included at an analytical cutoff. |
 | `SkillSnapshot` | Published aggregate tied to corpus, metric, and taxonomy versions. |
 | `Conversation` | Persistent assistant interaction container. |
@@ -186,9 +188,9 @@ flowchart LR
 
 The deterministic dictionary and rules form a high-precision baseline. Optional model stages address residual mentions or candidate ranking only after baseline measurement. A model cannot silently create authoritative taxonomy entries.
 
-A skill has a stable ID, canonical label, category, lifecycle status, and taxonomy version. Aliases preserve locale, normalized form, matching mode, case sensitivity, token-boundary rules, and ambiguity status. Parent-child relationships must not collapse distinct technologies: for example, a cloud service can remain a child of a cloud platform rather than being treated as a mere spelling variant.
+A skill has a stable ID, canonical label, category, lifecycle status, and taxonomy version. Aliases preserve locale, normalized form, matching mode, case sensitivity, token-boundary rules, ambiguity status, and curation evidence. Parent-child relationships do not collapse distinct technologies: the implemented `PART_OF` edge keeps Amazon EC2 as a child of AWS rather than treating it as a spelling variant.
 
-Every accepted job-skill association should retain source span, extraction method, confidence or review state, processor version, and taxonomy version. Ambiguous mentions should abstain or enter a candidate-review queue. New skills require examples and human or deterministic acceptance criteria.
+Every accepted job-skill association retains source span, extraction method, confidence or review state, processor version, and taxonomy version. Ambiguous short aliases abstain from accepted evidence and enter the persisted `skill_candidates` review path with source span, reason, status, extractor version, snapshot, normalization, and taxonomy references. New skills require examples and human or deterministic acceptance criteria.
 
 ### 9.2 Evaluation
 
@@ -424,6 +426,18 @@ M1 verification against PostgreSQL 16.4 completed on 2026-09-21. An empty databa
 
 Measured ingestion on separate empty migrated databases accepted all records without duplicates or failures. The 1,000-record workload completed in 25.8627 seconds at 38.6658 records/second with 2,123,734 bytes peak traced Python memory. The 10,000-record workload completed in 278.8079 seconds at 35.8670 records/second with 12,964,472 bytes peak traced Python memory. Results are machine-specific; `tracemalloc` excludes PostgreSQL server memory and does not characterize cold/warm cache behavior. Ruff format and lint checks, strict mypy, wheel build, migration/schema verification, and Git whitespace validation passed. Known warnings are Starlette/AnyIO and Alembic configuration deprecations. Automated backoff/scheduling is intentionally absent; M1 verifies retryable classification plus explicit replay recovery.
 
+### Verified M2 findings
+
+M2 extends the modular backend and PostgreSQL schema rather than introducing another service. Migration revision `0002_m2_normalization` adds versioned taxonomy and snapshot-bound normalization/extraction persistence while retaining M1 corpus history. The implemented resource versions are `skills-2026-09-22`, `normalization-2026-09-01`, and `extraction-2026-09-22`. Taxonomy publication uses a deterministic manifest hash and rejects different content under an existing version. Derived outputs bind to immutable job snapshots and retain processor, normalization, extraction, and taxonomy versions; accepted skill evidence retains source field and half-open Unicode code-point offsets. Historical outputs are additive and are not silently rewritten.
+
+Deterministic code is authoritative for normalization and extraction. Role, seniority, and location normalization return matched, ambiguous, or unknown states and can abstain instead of forcing a label. Skill extraction uses the checked-in canonical alias catalog, boundary-aware deterministic matching, canonical skill IDs, and exact evidence offsets. No model participates in these results. Current taxonomy version `skills-2026-09-01` contains exactly 31 canonical skills and 44 distinct aliases, with locale, matching mode, case-sensitivity, boundary, ambiguity, and curation metadata. Its manifest hash is `04d9fe6870cc20d03e77ed4c95aa5b8222478882581e8795f429fd9dff5a09b3`. The versioned `skill_relationships` table persists the reviewed AWS-to-Amazon EC2 `PART_OF` edge. Ambiguous short aliases enter the versioned `skill_candidates` table as pending review evidence. Precompiled boundary-aware patterns classify ordinary aliases as `alias` and reviewed punctuation-sensitive forms as `regex`, and persisted evidence retains that method.
+
+Evaluation uses corpus version `1.2.0`: 24 synthetic, manually annotated English examples released as CC0-1.0. Canonical-skill micro results are TP 71, FP 4, FN 0, precision 0.9466666667, recall 1, F1 0.9726027397, and macro F1 0.9444444444. Exact-span micro results are TP 75, FP 4, FN 0, precision 75/79 (0.9493670886), recall 1, and F1 0.9740259740. Role classification achieved accuracy 1, macro F1 1, and abstention rate 0.25. Seniority achieved accuracy 0.8333333333, macro F1 0.8518518519, and abstention rate 0.2916666667. Location achieved accuracy 1, macro F1 1, and abstention rate 0.25.
+
+Observed failure modes are concrete rather than hypothetical. Four hard-negative contextual mentions produce both canonical-skill and exact-span false positives. Seniority produces three false `manager` labels from the word “Manager” in unsupported product-manager titles and maps one expected `lead` case to `manager`. The benchmark is small, synthetic, English-only, and not representative of production distributions; alias matching is not contextual semantic extraction, and offsets use Unicode code-point indexes within each source field. Perfect role and location scores on this corpus do not establish production accuracy.
+
+Current verification passed 66 non-integration tests, 9 PostgreSQL integration tests, and 6 evaluation-suite tests. The full integration suite ran against the isolated `tech_market_test` database. A fresh database migrated to Alembic head `0002_m2_normalization`, and migration verification confirmed M1 tables and behavior remain preserved alongside M2 additions. These results establish repository behavior on the verified fixture and test scope only; they do not establish live-source, multilingual, production-scale, or externally adjudicated quality.
+
 ## 19. Expected Technical Contributions
 
 ### 18.1 Data engineering
@@ -528,11 +542,13 @@ Each direction requires explicit scope approval, a measurable success criterion,
 7. `docs/adr/ADR-002-postgresql-source-of-truth.md` — decision to use PostgreSQL as initial operational and analytics authority.
 8. `docs/engineering/engineering-contract.md` — runtime/tool choices, dependency policy, testing layers, migration policy, ADR process, and Definition of Done.
 9. `docs/configuration/secrets.md` — configuration, validation, secret, and logging policy.
-10. `pyproject.toml`, `requirements.in`, `requirements.lock`, `package.json`, `.python-version`, `.nvmrc`, `.github/workflows/ci.yml` — implemented M0 toolchain and CI evidence.
+10. `docs/adr/ADR-005-taxonomy-versioning-and-extraction-authority.md` — M2 versioning, deterministic authority, abstention, and evidence decision.
+11. `data/benchmarks/extraction/corpus.json`, `data/benchmarks/extraction/report.json` — M2 synthetic CC0 evaluation corpus and generated report.
+12. `pyproject.toml`, `requirements.in`, `requirements.lock`, `package.json`, `.python-version`, `.nvmrc`, `.github/workflows/ci.yml` — implemented toolchain and CI evidence.
 
 ### External research reference
 
-11. Yaniv Leviathan, Matan Kalman, and Yossi Matias. “Prompt Repetition Improves Non-Reasoning LLMs.” arXiv:2512.14982v1.
+13. Yaniv Leviathan, Matan Kalman, and Yossi Matias. “Prompt Repetition Improves Non-Reasoning LLMs.” arXiv:2512.14982v1.
 
 ## 25. Document Maintenance Policy
 

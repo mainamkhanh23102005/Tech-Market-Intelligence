@@ -1,0 +1,991 @@
+{
+  "manifest": {
+    "name": "m2-labeled-extraction-evaluation",
+    "version": "1.2.0",
+    "license": "CC0-1.0",
+    "provenance": "Synthetic and manually annotated examples created for this repository; no source text copied.",
+    "language": "en",
+    "example_count": 24,
+    "seed": 20260922,
+    "catalog_version": "skills-2026-09-22",
+    "normalization_version": "normalization-2026-09-01",
+    "extraction_version": "extraction-2026-09-22"
+  },
+  "annotation_guide": {
+    "role": "Canonical role ID when exactly one supported role is explicit; null for ambiguous, unsupported, or unknown.",
+    "seniority": "Canonical seniority ID when explicit; null when absent or unknown.",
+    "location": "Canonical work arrangement remote, hybrid, or onsite when exactly one is explicit; null when ambiguous or unknown.",
+    "skills": "Unique canonical skill IDs explicitly named in title or description; incidental prose and unsupported skills are excluded.",
+    "skill_spans": "Every explicit supported skill mention annotated by canonical ID, source field, exact text, and half-open Unicode code-point offsets."
+  },
+  "examples": [
+    {
+      "id": "positive-01",
+      "cohort": "positive",
+      "title": "Senior Software Engineer",
+      "description": "Build Python services with FastAPI and PostgreSQL.\nDocker and AWS experience.",
+      "location": "Remote",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": "senior",
+        "location": "remote",
+        "skills": [
+          "python",
+          "fastapi",
+          "postgresql",
+          "docker",
+          "aws"
+        ],
+        "skill_spans": [
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 6,
+            "end": 12,
+            "text": "Python"
+          },
+          {
+            "skill": "fastapi",
+            "source": "description",
+            "start": 27,
+            "end": 34,
+            "text": "FastAPI"
+          },
+          {
+            "skill": "postgresql",
+            "source": "description",
+            "start": 39,
+            "end": 49,
+            "text": "PostgreSQL"
+          },
+          {
+            "skill": "docker",
+            "source": "description",
+            "start": 51,
+            "end": 57,
+            "text": "Docker"
+          },
+          {
+            "skill": "aws",
+            "source": "description",
+            "start": 62,
+            "end": 65,
+            "text": "AWS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "case-02",
+      "cohort": "case",
+      "title": "STAFF DATA ENGINEER",
+      "description": "Work with PYTHON, SQL, and POSTGRES.\nTerraform preferred.",
+      "location": "HYBRID",
+      "labels": {
+        "role": "data_engineer",
+        "seniority": "staff",
+        "location": "hybrid",
+        "skills": [
+          "python",
+          "sql",
+          "postgresql",
+          "terraform"
+        ],
+        "skill_spans": [
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 10,
+            "end": 16,
+            "text": "PYTHON"
+          },
+          {
+            "skill": "sql",
+            "source": "description",
+            "start": 18,
+            "end": 21,
+            "text": "SQL"
+          },
+          {
+            "skill": "postgresql",
+            "source": "description",
+            "start": 27,
+            "end": 35,
+            "text": "POSTGRES"
+          },
+          {
+            "skill": "terraform",
+            "source": "description",
+            "start": 37,
+            "end": 46,
+            "text": "Terraform"
+          }
+        ]
+      }
+    },
+    {
+      "id": "alias-03",
+      "cohort": "alias",
+      "title": "Sr Software Developer",
+      "description": "NodeJS APIs in JS with MongoDB.\nMicrosoft Azure knowledge.",
+      "location": "Onsite",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": "senior",
+        "location": "onsite",
+        "skills": [
+          "nodejs",
+          "javascript",
+          "mongodb",
+          "azure"
+        ],
+        "skill_spans": [
+          {
+            "skill": "nodejs",
+            "source": "description",
+            "start": 0,
+            "end": 6,
+            "text": "NodeJS"
+          },
+          {
+            "skill": "javascript",
+            "source": "description",
+            "start": 15,
+            "end": 17,
+            "text": "JS"
+          },
+          {
+            "skill": "mongodb",
+            "source": "description",
+            "start": 23,
+            "end": 30,
+            "text": "MongoDB"
+          },
+          {
+            "skill": "azure",
+            "source": "description",
+            "start": 32,
+            "end": 47,
+            "text": "Microsoft Azure"
+          }
+        ]
+      }
+    },
+    {
+      "id": "punctuation-04",
+      "cohort": "punctuation",
+      "title": "Lead Software Engineer",
+      "description": "Build .NET services in C# and C++.\nGit.",
+      "location": "Hybrid - London",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": "lead",
+        "location": "hybrid",
+        "skills": [
+          "dotnet",
+          "csharp",
+          "cpp",
+          "git"
+        ],
+        "skill_spans": [
+          {
+            "skill": "dotnet",
+            "source": "description",
+            "start": 6,
+            "end": 10,
+            "text": ".NET"
+          },
+          {
+            "skill": "csharp",
+            "source": "description",
+            "start": 23,
+            "end": 25,
+            "text": "C#"
+          },
+          {
+            "skill": "cpp",
+            "source": "description",
+            "start": 30,
+            "end": 33,
+            "text": "C++"
+          },
+          {
+            "skill": "git",
+            "source": "description",
+            "start": 35,
+            "end": 38,
+            "text": "Git"
+          }
+        ]
+      }
+    },
+    {
+      "id": "short-positive-05",
+      "cohort": "short_alias",
+      "title": "Junior Software Engineer",
+      "description": "We code in Go, Java, and R.\nSQL required.",
+      "location": "Remote only",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": "junior",
+        "location": "remote",
+        "skills": [
+          "go",
+          "java",
+          "r",
+          "sql"
+        ],
+        "skill_spans": [
+          {
+            "skill": "go",
+            "source": "description",
+            "start": 11,
+            "end": 13,
+            "text": "Go"
+          },
+          {
+            "skill": "java",
+            "source": "description",
+            "start": 15,
+            "end": 19,
+            "text": "Java"
+          },
+          {
+            "skill": "r",
+            "source": "description",
+            "start": 25,
+            "end": 26,
+            "text": "R"
+          },
+          {
+            "skill": "sql",
+            "source": "description",
+            "start": 28,
+            "end": 31,
+            "text": "SQL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "short-trap-06",
+      "cohort": "prose_trap",
+      "title": "Product Manager",
+      "description": "Go to market, plan releases, and communicate with stakeholders.\nReact calmly to change.",
+      "location": "Boston, MA",
+      "labels": {
+        "role": null,
+        "seniority": null,
+        "location": null,
+        "skills": [],
+        "skill_spans": []
+      }
+    },
+    {
+      "id": "unknown-07",
+      "cohort": "unknown",
+      "title": "Chief Happiness Wizard",
+      "description": "Shape culture and rituals.\nEmpathy.",
+      "location": "Moon base",
+      "labels": {
+        "role": null,
+        "seniority": null,
+        "location": null,
+        "skills": [],
+        "skill_spans": []
+      }
+    },
+    {
+      "id": "ambiguous-role-08",
+      "cohort": "ambiguous",
+      "title": "Data Engineer / Data Scientist",
+      "description": "Python and PyTorch experimentation.\nTensorFlow useful.",
+      "location": "Remote or onsite",
+      "labels": {
+        "role": null,
+        "seniority": null,
+        "location": null,
+        "skills": [
+          "python",
+          "pytorch",
+          "tensorflow"
+        ],
+        "skill_spans": [
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 0,
+            "end": 6,
+            "text": "Python"
+          },
+          {
+            "skill": "pytorch",
+            "source": "description",
+            "start": 11,
+            "end": 18,
+            "text": "PyTorch"
+          },
+          {
+            "skill": "tensorflow",
+            "source": "description",
+            "start": 36,
+            "end": 46,
+            "text": "TensorFlow"
+          }
+        ]
+      }
+    },
+    {
+      "id": "mixed-09",
+      "cohort": "positive",
+      "title": "Principal DevOps Engineer",
+      "description": "Operate Kubernetes, K8s, Docker, and AWS.\nTerraform and Redis.",
+      "location": "Onsite",
+      "labels": {
+        "role": "devops_platform_engineer",
+        "seniority": "principal",
+        "location": "onsite",
+        "skills": [
+          "kubernetes",
+          "docker",
+          "aws",
+          "terraform",
+          "redis"
+        ],
+        "skill_spans": [
+          {
+            "skill": "kubernetes",
+            "source": "description",
+            "start": 8,
+            "end": 18,
+            "text": "Kubernetes"
+          },
+          {
+            "skill": "kubernetes",
+            "source": "description",
+            "start": 20,
+            "end": 23,
+            "text": "K8s"
+          },
+          {
+            "skill": "docker",
+            "source": "description",
+            "start": 25,
+            "end": 31,
+            "text": "Docker"
+          },
+          {
+            "skill": "aws",
+            "source": "description",
+            "start": 37,
+            "end": 40,
+            "text": "AWS"
+          },
+          {
+            "skill": "terraform",
+            "source": "description",
+            "start": 42,
+            "end": 51,
+            "text": "Terraform"
+          },
+          {
+            "skill": "redis",
+            "source": "description",
+            "start": 56,
+            "end": 61,
+            "text": "Redis"
+          }
+        ]
+      }
+    },
+    {
+      "id": "alias-10",
+      "cohort": "alias",
+      "title": "SRE",
+      "description": "Google Cloud Platform with Kubernetes.\nGolang and PostgreSQL.",
+      "location": "Fully remote",
+      "labels": {
+        "role": "devops_platform_engineer",
+        "seniority": null,
+        "location": "remote",
+        "skills": [
+          "gcp",
+          "kubernetes",
+          "go",
+          "postgresql"
+        ],
+        "skill_spans": [
+          {
+            "skill": "gcp",
+            "source": "description",
+            "start": 0,
+            "end": 21,
+            "text": "Google Cloud Platform"
+          },
+          {
+            "skill": "kubernetes",
+            "source": "description",
+            "start": 27,
+            "end": 37,
+            "text": "Kubernetes"
+          },
+          {
+            "skill": "go",
+            "source": "description",
+            "start": 39,
+            "end": 45,
+            "text": "Golang"
+          },
+          {
+            "skill": "postgresql",
+            "source": "description",
+            "start": 50,
+            "end": 60,
+            "text": "PostgreSQL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "framework-11",
+      "cohort": "positive",
+      "title": "Mid-level Software Developer",
+      "description": "TypeScript, React.js, and Node.js products.\nMySQL.",
+      "location": "Hybrid",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": "mid",
+        "location": "hybrid",
+        "skills": [
+          "typescript",
+          "react",
+          "nodejs",
+          "mysql"
+        ],
+        "skill_spans": [
+          {
+            "skill": "typescript",
+            "source": "description",
+            "start": 0,
+            "end": 10,
+            "text": "TypeScript"
+          },
+          {
+            "skill": "react",
+            "source": "description",
+            "start": 12,
+            "end": 20,
+            "text": "React.js"
+          },
+          {
+            "skill": "nodejs",
+            "source": "description",
+            "start": 26,
+            "end": 33,
+            "text": "Node.js"
+          },
+          {
+            "skill": "mysql",
+            "source": "description",
+            "start": 44,
+            "end": 49,
+            "text": "MySQL"
+          }
+        ]
+      }
+    },
+    {
+      "id": "framework-12",
+      "cohort": "positive",
+      "title": "Intermediate Software Engineer",
+      "description": "Java services using Spring Boot and Angular.\nAzure deployment.",
+      "location": "Onsite",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": "mid",
+        "location": "onsite",
+        "skills": [
+          "java",
+          "spring",
+          "angular",
+          "azure"
+        ],
+        "skill_spans": [
+          {
+            "skill": "java",
+            "source": "description",
+            "start": 0,
+            "end": 4,
+            "text": "Java"
+          },
+          {
+            "skill": "spring",
+            "source": "description",
+            "start": 20,
+            "end": 31,
+            "text": "Spring Boot"
+          },
+          {
+            "skill": "angular",
+            "source": "description",
+            "start": 36,
+            "end": 43,
+            "text": "Angular"
+          },
+          {
+            "skill": "azure",
+            "source": "description",
+            "start": 45,
+            "end": 50,
+            "text": "Azure"
+          }
+        ]
+      }
+    },
+    {
+      "id": "negative-boundary-13",
+      "cohort": "boundary",
+      "title": "Data Scientist",
+      "description": "Study javascripted prose, rusty systems, and angularity.\nNo named technical stack.",
+      "location": "Paris",
+      "labels": {
+        "role": "data_scientist",
+        "seniority": null,
+        "location": null,
+        "skills": [],
+        "skill_spans": []
+      }
+    },
+    {
+      "id": "duplicate-14",
+      "cohort": "duplicate",
+      "title": "Junior Data Scientist",
+      "description": "Python, python, PYTHON; PyTorch.\nSQL and Python.",
+      "location": "Remote",
+      "labels": {
+        "role": "data_scientist",
+        "seniority": "junior",
+        "location": "remote",
+        "skills": [
+          "python",
+          "pytorch",
+          "sql"
+        ],
+        "skill_spans": [
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 0,
+            "end": 6,
+            "text": "Python"
+          },
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 8,
+            "end": 14,
+            "text": "python"
+          },
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 16,
+            "end": 22,
+            "text": "PYTHON"
+          },
+          {
+            "skill": "pytorch",
+            "source": "description",
+            "start": 24,
+            "end": 31,
+            "text": "PyTorch"
+          },
+          {
+            "skill": "sql",
+            "source": "description",
+            "start": 33,
+            "end": 36,
+            "text": "SQL"
+          },
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 41,
+            "end": 47,
+            "text": "Python"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cloud-alias-15",
+      "cohort": "alias",
+      "title": "Product Manager",
+      "description": "Products hosted on Amazon Web Services and GCP.\nGit literacy.",
+      "location": "Hybrid",
+      "labels": {
+        "role": null,
+        "seniority": null,
+        "location": "hybrid",
+        "skills": [
+          "aws",
+          "gcp",
+          "git"
+        ],
+        "skill_spans": [
+          {
+            "skill": "aws",
+            "source": "description",
+            "start": 19,
+            "end": 38,
+            "text": "Amazon Web Services"
+          },
+          {
+            "skill": "gcp",
+            "source": "description",
+            "start": 43,
+            "end": 46,
+            "text": "GCP"
+          },
+          {
+            "skill": "git",
+            "source": "description",
+            "start": 48,
+            "end": 51,
+            "text": "Git"
+          }
+        ]
+      }
+    },
+    {
+      "id": "database-16",
+      "cohort": "positive",
+      "title": "Data Engineer",
+      "description": "Postgres, MySQL, MongoDB, and Redis pipelines.\nPython.",
+      "location": "Onsite",
+      "labels": {
+        "role": "data_engineer",
+        "seniority": null,
+        "location": "onsite",
+        "skills": [
+          "postgresql",
+          "mysql",
+          "mongodb",
+          "redis",
+          "python"
+        ],
+        "skill_spans": [
+          {
+            "skill": "postgresql",
+            "source": "description",
+            "start": 0,
+            "end": 8,
+            "text": "Postgres"
+          },
+          {
+            "skill": "mysql",
+            "source": "description",
+            "start": 10,
+            "end": 15,
+            "text": "MySQL"
+          },
+          {
+            "skill": "mongodb",
+            "source": "description",
+            "start": 17,
+            "end": 24,
+            "text": "MongoDB"
+          },
+          {
+            "skill": "redis",
+            "source": "description",
+            "start": 30,
+            "end": 35,
+            "text": "Redis"
+          },
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 47,
+            "end": 53,
+            "text": "Python"
+          }
+        ]
+      }
+    },
+    {
+      "id": "unknown-skill-17",
+      "cohort": "unknown",
+      "title": "Software Engineer",
+      "description": "Build Elixir services with Phoenix and CockroachDB.\nNix useful.",
+      "location": "Remote",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": null,
+        "location": "remote",
+        "skills": [],
+        "skill_spans": []
+      }
+    },
+    {
+      "id": "punctuation-18",
+      "cohort": "punctuation",
+      "title": "Staff Software Engineer",
+      "description": "C Sharp; C Plus Plus; dotnet; Node.js.\nReact.js.",
+      "location": "Onsite",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": "staff",
+        "location": "onsite",
+        "skills": [
+          "csharp",
+          "cpp",
+          "dotnet",
+          "nodejs",
+          "react"
+        ],
+        "skill_spans": [
+          {
+            "skill": "csharp",
+            "source": "description",
+            "start": 0,
+            "end": 7,
+            "text": "C Sharp"
+          },
+          {
+            "skill": "cpp",
+            "source": "description",
+            "start": 9,
+            "end": 20,
+            "text": "C Plus Plus"
+          },
+          {
+            "skill": "dotnet",
+            "source": "description",
+            "start": 22,
+            "end": 28,
+            "text": "dotnet"
+          },
+          {
+            "skill": "nodejs",
+            "source": "description",
+            "start": 30,
+            "end": 37,
+            "text": "Node.js"
+          },
+          {
+            "skill": "react",
+            "source": "description",
+            "start": 39,
+            "end": 47,
+            "text": "React.js"
+          }
+        ]
+      }
+    },
+    {
+      "id": "seniority-precedence-19",
+      "cohort": "ambiguous",
+      "title": "Senior Junior Software Engineer",
+      "description": "JavaScript and TypeScript.\nDocker.",
+      "location": "Hybrid",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": "senior",
+        "location": "hybrid",
+        "skills": [
+          "javascript",
+          "typescript",
+          "docker"
+        ],
+        "skill_spans": [
+          {
+            "skill": "javascript",
+            "source": "description",
+            "start": 0,
+            "end": 10,
+            "text": "JavaScript"
+          },
+          {
+            "skill": "typescript",
+            "source": "description",
+            "start": 15,
+            "end": 25,
+            "text": "TypeScript"
+          },
+          {
+            "skill": "docker",
+            "source": "description",
+            "start": 27,
+            "end": 33,
+            "text": "Docker"
+          }
+        ]
+      }
+    },
+    {
+      "id": "entry-alias-20",
+      "cohort": "alias",
+      "title": "Entry level Data Engineer",
+      "description": "SQL with Python.\nAWS.",
+      "location": "Remote",
+      "labels": {
+        "role": "data_engineer",
+        "seniority": "entry",
+        "location": "remote",
+        "skills": [
+          "sql",
+          "python",
+          "aws"
+        ],
+        "skill_spans": [
+          {
+            "skill": "sql",
+            "source": "description",
+            "start": 0,
+            "end": 3,
+            "text": "SQL"
+          },
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 9,
+            "end": 15,
+            "text": "Python"
+          },
+          {
+            "skill": "aws",
+            "source": "description",
+            "start": 17,
+            "end": 20,
+            "text": "AWS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "intern-21",
+      "cohort": "positive",
+      "title": "Software Engineer Internship",
+      "description": "Django and FastAPI learning project.\nGit.",
+      "location": "Onsite",
+      "labels": {
+        "role": "software_engineer",
+        "seniority": "intern",
+        "location": "onsite",
+        "skills": [
+          "django",
+          "fastapi",
+          "git"
+        ],
+        "skill_spans": [
+          {
+            "skill": "django",
+            "source": "description",
+            "start": 0,
+            "end": 6,
+            "text": "Django"
+          },
+          {
+            "skill": "fastapi",
+            "source": "description",
+            "start": 11,
+            "end": 18,
+            "text": "FastAPI"
+          },
+          {
+            "skill": "git",
+            "source": "description",
+            "start": 37,
+            "end": 40,
+            "text": "Git"
+          }
+        ]
+      }
+    },
+    {
+      "id": "prose-traps-22",
+      "cohort": "prose_trap",
+      "title": "Product Manager",
+      "description": "Spring planning helps teams react to rust and go faster.\nPlan in Google docs.",
+      "location": "Flexible",
+      "labels": {
+        "role": null,
+        "seniority": null,
+        "location": null,
+        "skills": [],
+        "skill_spans": []
+      }
+    },
+    {
+      "id": "mixed-case-alias-23",
+      "cohort": "case",
+      "title": "DATA SCIENTIST",
+      "description": "pYtOrCh and TensorFlow on Microsoft Azure.\nPython and R.",
+      "location": "remote",
+      "labels": {
+        "role": "data_scientist",
+        "seniority": null,
+        "location": "remote",
+        "skills": [
+          "pytorch",
+          "tensorflow",
+          "azure",
+          "python",
+          "r"
+        ],
+        "skill_spans": [
+          {
+            "skill": "pytorch",
+            "source": "description",
+            "start": 0,
+            "end": 7,
+            "text": "pYtOrCh"
+          },
+          {
+            "skill": "tensorflow",
+            "source": "description",
+            "start": 12,
+            "end": 22,
+            "text": "TensorFlow"
+          },
+          {
+            "skill": "azure",
+            "source": "description",
+            "start": 26,
+            "end": 41,
+            "text": "Microsoft Azure"
+          },
+          {
+            "skill": "python",
+            "source": "description",
+            "start": 43,
+            "end": 49,
+            "text": "Python"
+          },
+          {
+            "skill": "r",
+            "source": "description",
+            "start": 54,
+            "end": 55,
+            "text": "R"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ambiguous-arrangement-24",
+      "cohort": "ambiguous",
+      "title": "Lead Product Manager",
+      "description": "Coordinate software delivery without coding requirements.\nNo specific technology required.",
+      "location": "Hybrid or remote",
+      "labels": {
+        "role": null,
+        "seniority": "lead",
+        "location": null,
+        "skills": [],
+        "skill_spans": []
+      }
+    }
+  ]
+}

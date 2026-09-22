@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0)]
-    [ValidateSet("format", "format-check", "lint", "typecheck", "test", "test-unit", "test-integration", "build", "migrate", "ci")]
+    [ValidateSet("format", "format-check", "lint", "typecheck", "test", "test-unit", "test-integration", "test-evaluation", "evaluation", "build", "migrate", "ci")]
     [string]$Task = "ci"
 )
 
@@ -26,6 +26,8 @@ switch ($Task) {
     "test" { Invoke-Step "test" { & $python -m pytest -m "not integration" } }
     "test-unit" { Invoke-Step "test-unit" { & $python -m pytest -m "not integration" } }
     "test-integration" { Invoke-Step "test-integration" { & $python -m pytest -m integration } }
+    "test-evaluation" { Invoke-Step "test-evaluation" { & $python -m pytest tests/evaluation } }
+    "evaluation" { Invoke-Step "evaluation" { & $python -m tech_market_backend.taxonomy.evaluation_cli } }
     "migrate" {
         if (-not $env:DATABASE_URL) { throw "DATABASE_URL is required" }
         Invoke-Step "migrate" { & $python -m alembic upgrade head }

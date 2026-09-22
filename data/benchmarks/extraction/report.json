@@ -1,0 +1,1592 @@
+{
+  "ambiguity": {
+    "location": 2,
+    "role": 1,
+    "seniority": 0
+  },
+  "baseline": "Deterministic in-repository canonical normalizer and precompiled boundary-aware alias/regex extractor; no tuning on external data.",
+  "cohorts": {
+    "alias": {
+      "count": 4,
+      "role": {
+        "abstention_rate": 0.25,
+        "abstentions": 1,
+        "accuracy": 1.0,
+        "correct": 4,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "data_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "devops_platform_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "software_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 4
+      },
+      "seniority": {
+        "abstention_rate": 0.25,
+        "abstentions": 1,
+        "accuracy": 0.75,
+        "correct": 3,
+        "errors": [
+          {
+            "expected": null,
+            "id": "cloud-alias-15",
+            "predicted": "manager"
+          }
+        ],
+        "macro_f1": 0.6666666666666666,
+        "per_class": {
+          "entry": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "manager": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "senior": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 4
+      },
+      "skills": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "macro_f1": 1.0,
+        "per_skill": {
+          "aws": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "azure": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "gcp": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "git": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "go": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "javascript": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "kubernetes": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "mongodb": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "nodejs": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "postgresql": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "python": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "sql": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 14
+      }
+    },
+    "ambiguous": {
+      "count": 3,
+      "role": {
+        "abstention_rate": 0.6666666666666666,
+        "abstentions": 2,
+        "accuracy": 1.0,
+        "correct": 3,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "software_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 3
+      },
+      "seniority": {
+        "abstention_rate": 0.3333333333333333,
+        "abstentions": 1,
+        "accuracy": 0.6666666666666666,
+        "correct": 2,
+        "errors": [
+          {
+            "expected": "lead",
+            "id": "ambiguous-arrangement-24",
+            "predicted": "manager"
+          }
+        ],
+        "macro_f1": 0.3333333333333333,
+        "per_class": {
+          "lead": {
+            "f1": 0.0,
+            "fn": 1,
+            "fp": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "manager": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "senior": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 3
+      },
+      "skills": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "macro_f1": 1.0,
+        "per_skill": {
+          "docker": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "javascript": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "python": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "pytorch": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "tensorflow": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "typescript": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 6
+      }
+    },
+    "boundary": {
+      "count": 1,
+      "role": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 1.0,
+        "correct": 1,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "data_scientist": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 1
+      },
+      "seniority": {
+        "abstention_rate": 1.0,
+        "abstentions": 1,
+        "accuracy": 1.0,
+        "correct": 1,
+        "errors": [],
+        "macro_f1": 0.0,
+        "per_class": {},
+        "total": 1
+      },
+      "skills": {
+        "f1": 0.0,
+        "fn": 0,
+        "fp": 0,
+        "macro_f1": 0.0,
+        "per_skill": {},
+        "precision": 0.0,
+        "recall": 0.0,
+        "tp": 0
+      }
+    },
+    "case": {
+      "count": 2,
+      "role": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 1.0,
+        "correct": 2,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "data_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "data_scientist": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 2
+      },
+      "seniority": {
+        "abstention_rate": 0.5,
+        "abstentions": 1,
+        "accuracy": 1.0,
+        "correct": 2,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "staff": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 2
+      },
+      "skills": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "macro_f1": 1.0,
+        "per_skill": {
+          "azure": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "postgresql": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "python": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "pytorch": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "r": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "sql": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "tensorflow": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "terraform": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 9
+      }
+    },
+    "duplicate": {
+      "count": 1,
+      "role": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 1.0,
+        "correct": 1,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "data_scientist": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 1
+      },
+      "seniority": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 1.0,
+        "correct": 1,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "junior": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 1
+      },
+      "skills": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "macro_f1": 1.0,
+        "per_skill": {
+          "python": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "pytorch": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "sql": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 3
+      }
+    },
+    "positive": {
+      "count": 6,
+      "role": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 1.0,
+        "correct": 6,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "data_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "devops_platform_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "software_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 4
+          }
+        },
+        "total": 6
+      },
+      "seniority": {
+        "abstention_rate": 0.16666666666666666,
+        "abstentions": 1,
+        "accuracy": 1.0,
+        "correct": 6,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "intern": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "mid": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "principal": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "senior": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 6
+      },
+      "skills": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "macro_f1": 1.0,
+        "per_skill": {
+          "angular": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "aws": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "azure": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "django": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "docker": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "fastapi": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "git": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "java": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "kubernetes": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "mongodb": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "mysql": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "nodejs": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "postgresql": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "python": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "react": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "redis": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "spring": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "terraform": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "typescript": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 26
+      }
+    },
+    "prose_trap": {
+      "count": 2,
+      "role": {
+        "abstention_rate": 1.0,
+        "abstentions": 2,
+        "accuracy": 1.0,
+        "correct": 2,
+        "errors": [],
+        "macro_f1": 0.0,
+        "per_class": {},
+        "total": 2
+      },
+      "seniority": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 0.0,
+        "correct": 0,
+        "errors": [
+          {
+            "expected": null,
+            "id": "short-trap-06",
+            "predicted": "manager"
+          },
+          {
+            "expected": null,
+            "id": "prose-traps-22",
+            "predicted": "manager"
+          }
+        ],
+        "macro_f1": 0.0,
+        "per_class": {
+          "manager": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "total": 2
+      },
+      "skills": {
+        "f1": 0.0,
+        "fn": 0,
+        "fp": 4,
+        "macro_f1": 0.0,
+        "per_skill": {
+          "react": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "rust": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          },
+          "spring": {
+            "f1": 0.0,
+            "fn": 0,
+            "fp": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "tp": 0
+          }
+        },
+        "precision": 0.0,
+        "recall": 0.0,
+        "tp": 0
+      }
+    },
+    "punctuation": {
+      "count": 2,
+      "role": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 1.0,
+        "correct": 2,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "software_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          }
+        },
+        "total": 2
+      },
+      "seniority": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 1.0,
+        "correct": 2,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "lead": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "staff": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 2
+      },
+      "skills": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "macro_f1": 1.0,
+        "per_skill": {
+          "cpp": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "csharp": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "dotnet": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 2
+          },
+          "git": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "nodejs": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "react": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 9
+      }
+    },
+    "short_alias": {
+      "count": 1,
+      "role": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 1.0,
+        "correct": 1,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "software_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 1
+      },
+      "seniority": {
+        "abstention_rate": 0.0,
+        "abstentions": 0,
+        "accuracy": 1.0,
+        "correct": 1,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "junior": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 1
+      },
+      "skills": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "macro_f1": 1.0,
+        "per_skill": {
+          "go": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "java": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "r": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          },
+          "sql": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 4
+      }
+    },
+    "unknown": {
+      "count": 2,
+      "role": {
+        "abstention_rate": 0.5,
+        "abstentions": 1,
+        "accuracy": 1.0,
+        "correct": 2,
+        "errors": [],
+        "macro_f1": 1.0,
+        "per_class": {
+          "software_engineer": {
+            "f1": 1.0,
+            "fn": 0,
+            "fp": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "tp": 1
+          }
+        },
+        "total": 2
+      },
+      "seniority": {
+        "abstention_rate": 1.0,
+        "abstentions": 2,
+        "accuracy": 1.0,
+        "correct": 2,
+        "errors": [],
+        "macro_f1": 0.0,
+        "per_class": {},
+        "total": 2
+      },
+      "skills": {
+        "f1": 0.0,
+        "fn": 0,
+        "fp": 0,
+        "macro_f1": 0.0,
+        "per_skill": {},
+        "precision": 0.0,
+        "recall": 0.0,
+        "tp": 0
+      }
+    }
+  },
+  "corpus": {
+    "manifest": {
+      "catalog_version": "skills-2026-09-22",
+      "example_count": 24,
+      "extraction_version": "extraction-2026-09-22",
+      "language": "en",
+      "license": "CC0-1.0",
+      "name": "m2-labeled-extraction-evaluation",
+      "normalization_version": "normalization-2026-09-01",
+      "provenance": "Synthetic and manually annotated examples created for this repository; no source text copied.",
+      "seed": 20260922,
+      "version": "1.2.0"
+    },
+    "size": 24
+  },
+  "definitions": {
+    "canonical_skill": "Micro exact match of unique canonical skill IDs per example.",
+    "exact_span": "Micro exact match of skill ID, source field, start offset, and end offset.",
+    "label": "Exact canonical label accuracy; macro F1 averages one-vs-rest class F1."
+  },
+  "exact_spans": {
+    "f1": 0.974025974025974,
+    "fn": 0,
+    "fp": 4,
+    "precision": 0.9493670886075949,
+    "recall": 1.0,
+    "tp": 75
+  },
+  "extraction_methods": [
+    "alias",
+    "regex"
+  ],
+  "known_limitations": [
+    "Small synthetic English corpus is not representative of production distributions.",
+    "Baseline is deterministic alias/regex matching, not contextual semantic extraction.",
+    "Offsets are Unicode code-point indexes within each source field."
+  ],
+  "location": {
+    "abstention_rate": 0.25,
+    "abstentions": 6,
+    "accuracy": 1.0,
+    "correct": 24,
+    "errors": [],
+    "macro_f1": 1.0,
+    "per_class": {
+      "hybrid": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 5
+      },
+      "onsite": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 6
+      },
+      "remote": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 7
+      }
+    },
+    "total": 24
+  },
+  "role": {
+    "abstention_rate": 0.25,
+    "abstentions": 6,
+    "accuracy": 1.0,
+    "correct": 24,
+    "errors": [],
+    "macro_f1": 1.0,
+    "per_class": {
+      "data_engineer": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 3
+      },
+      "data_scientist": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 3
+      },
+      "devops_platform_engineer": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "software_engineer": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 10
+      }
+    },
+    "total": 24
+  },
+  "seniority": {
+    "abstention_rate": 0.2916666666666667,
+    "abstentions": 7,
+    "accuracy": 0.8333333333333334,
+    "correct": 20,
+    "errors": [
+      {
+        "expected": null,
+        "id": "short-trap-06",
+        "predicted": "manager"
+      },
+      {
+        "expected": null,
+        "id": "cloud-alias-15",
+        "predicted": "manager"
+      },
+      {
+        "expected": null,
+        "id": "prose-traps-22",
+        "predicted": "manager"
+      },
+      {
+        "expected": "lead",
+        "id": "ambiguous-arrangement-24",
+        "predicted": "manager"
+      }
+    ],
+    "macro_f1": 0.8518518518518519,
+    "per_class": {
+      "entry": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 1
+      },
+      "intern": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 1
+      },
+      "junior": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "lead": {
+        "f1": 0.6666666666666666,
+        "fn": 1,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 0.5,
+        "tp": 1
+      },
+      "manager": {
+        "f1": 0.0,
+        "fn": 0,
+        "fp": 4,
+        "precision": 0.0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      "mid": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "principal": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 1
+      },
+      "senior": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 3
+      },
+      "staff": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      }
+    },
+    "total": 24
+  },
+  "skills": {
+    "f1": 0.9726027397260273,
+    "fn": 0,
+    "fp": 4,
+    "macro_f1": 0.9444444444444444,
+    "per_skill": {
+      "angular": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 1
+      },
+      "aws": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 4
+      },
+      "azure": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 3
+      },
+      "cpp": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "csharp": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "django": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 1
+      },
+      "docker": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 3
+      },
+      "dotnet": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "fastapi": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "gcp": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "git": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 3
+      },
+      "go": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "java": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "javascript": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "kubernetes": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "mongodb": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "mysql": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "nodejs": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 3
+      },
+      "postgresql": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 4
+      },
+      "python": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 7
+      },
+      "pytorch": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 3
+      },
+      "r": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "react": {
+        "f1": 0.6666666666666666,
+        "fn": 0,
+        "fp": 2,
+        "precision": 0.5,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "redis": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "rust": {
+        "f1": 0.0,
+        "fn": 0,
+        "fp": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      "spring": {
+        "f1": 0.6666666666666666,
+        "fn": 0,
+        "fp": 1,
+        "precision": 0.5,
+        "recall": 1.0,
+        "tp": 1
+      },
+      "sql": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 4
+      },
+      "tensorflow": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "terraform": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "typescript": {
+        "f1": 1.0,
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      }
+    },
+    "precision": 0.9466666666666667,
+    "recall": 1.0,
+    "tp": 71
+  },
+  "versions": {
+    "catalog": "skills-2026-09-22",
+    "extraction": "extraction-2026-09-22",
+    "normalization": "normalization-2026-09-01",
+    "taxonomy_manifest_hash": "04d9fe6870cc20d03e77ed4c95aa5b8222478882581e8795f429fd9dff5a09b3"
+  }
+}

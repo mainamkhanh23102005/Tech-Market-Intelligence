@@ -44,16 +44,17 @@ Verify: `make lint typecheck test test-integration`; import fixture twice and co
 
 ## M2 — Normalization and Skill Intelligence
 
-- [ ] M2.1 Define versioned role, seniority, location, and skill taxonomy schemas.
-- [ ] M2.2 Seed reviewed canonical skills, aliases, categories, and parent/child relationships.
-- [ ] M2.3 Build exact alias and regex extraction baseline with source spans.
-- [ ] M2.4 Build ambiguity/abstention and candidate-review path.
-- [ ] M2.5 Label stratified extraction/classification benchmark.
-- [ ] M2.6 Publish baseline precision/recall/F1 and macro-F1 report.
+- [x] M2.1 Define versioned role, seniority, location, and skill taxonomy schemas.
+- [x] M2.2 Seed reviewed canonical skills, aliases, categories, and parent/child relationships.
+- [x] M2.3 Build exact alias and regex extraction baseline with source spans.
+  - Verified: deterministic precompiled alias/regex extraction emits distinct methods with boundary-safe source offsets.
+- [x] M2.4 Build ambiguity/abstention and candidate-review path.
+- [x] M2.5 Label stratified extraction/classification benchmark.
+- [x] M2.6 Publish baseline precision/recall/F1 and macro-F1 report.
 
-Acceptance: all normalized values carry method/version; low confidence abstains; benchmark report reproducible.
+Acceptance: normalized outputs carry explicit versions and persisted extraction evidence carries method/version; ambiguous or unknown values can abstain or enter the persisted candidate-review path; the checked-in 24-example synthetic CC0 benchmark report is reproducible. Canonical skills include versioned alias metadata and persisted parent/child relationships. Exact alias and reviewed regex methods are distinct.
 
-Verify: `make test test-integration test-evaluation`.
+Verify: `make test test-integration test-evaluation`. Current result: 66 non-integration tests and 6 evaluation tests pass; 9 PostgreSQL integration tests are configured but skipped when `TEST_DATABASE_URL` is absent.
 
 ## M3 — Deterministic Analytics and UI
 

@@ -6,6 +6,7 @@ import pytest
 from alembic import command
 from alembic.config import Config
 from sqlalchemy import func, select
+from sqlalchemy.engine import make_url
 from tech_market_backend.ingestion.contracts import PermissionManifest
 from tech_market_backend.ingestion.provenance import inspect_provenance
 from tech_market_backend.ingestion.service import IngestionService
@@ -25,7 +26,10 @@ pytestmark = pytest.mark.integration
 @pytest.fixture()
 def database():
     if not DATABASE_URL:
-        pytest.skip("TEST_DATABASE_URL is not set")
+        pytest.skip("TEST_DATABASE_URL is not configured")
+    database = make_url(DATABASE_URL).database
+    if database is None or "test" not in database.casefold():
+        pytest.fail("TEST_DATABASE_URL database name must contain 'test'")
     config = Config("alembic.ini")
     config.set_main_option("sqlalchemy.url", DATABASE_URL)
     command.downgrade(config, "base")

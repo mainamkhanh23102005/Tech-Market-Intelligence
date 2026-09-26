@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     APP_ENV: Literal["local", "test", "production"] = "local"
     LOG_LEVEL: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "INFO"
     PROVIDER_API_KEY: SecretStr | None = Field(default=None, repr=False)
+    DATABASE_URL: SecretStr | None = Field(default=None, repr=False)
 
 
 def load_settings() -> Settings:

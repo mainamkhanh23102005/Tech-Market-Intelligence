@@ -4,13 +4,13 @@ Evidence-backed technical job-market intelligence platform. Deterministic stored
 
 ## Current milestone
 
-M2 Normalization and Skill Intelligence. Repository contains M1 corpus ingestion plus versioned role, seniority, location, and skill normalization; deterministic precompiled alias/regex extraction with source offsets; ambiguity/abstention and persisted candidate-review evidence; versioned parent/child taxonomy relationships; snapshot-bound persisted outputs; and a reproducible 24-example synthetic CC0 evaluation. Analytics, search, market UI, AI, profiles, and live source adapters are not implemented.
+M3 Deterministic Analytics and First Useful UI is implemented in this working tree. Repository now includes versioned metric definitions, immutable exact-membership corpus snapshots, analytics-run and statistic storage, deterministic skill/role/location/co-occurrence calculations, versioned paginated FastAPI contracts, and a minimal accessible Next.js evidence drill-down. Search, AI, profiles, live source adapters, and M4+ systems remain unimplemented.
 
 ## Supported toolchain
 
 - Python 3.12.x; pinned local reference: 3.12.10
 - Node.js 22 LTS; pinned baseline: 22.22.0
-- npm 10 or 11; no Node dependencies or frontend scaffold in M0
+- npm 10 or 11; exact frontend dependencies and `package-lock.json`
 - PowerShell 5.1+ task runner
 
 ## Setup on Windows PowerShell
@@ -21,6 +21,7 @@ py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install --require-hashes -r requirements.lock
 .\.venv\Scripts\python.exe -m pip install --no-deps -e .
 Copy-Item .env.example .env
+npm ci
 ```
 
 `requirements.lock` is authoritative for repeatable installs. `requirements.in` documents direct dependencies used to regenerate it according to `docs/engineering/engineering-contract.md`.
@@ -37,6 +38,8 @@ Copy-Item .env.example .env
 .\scripts\tasks.ps1 evaluation
 .\.venv\Scripts\tech-market-evaluation.exe
 .\.venv\Scripts\python.exe -m tech_market_backend.taxonomy.evaluation_cli
+.\scripts\tasks.ps1 web-test
+.\scripts\tasks.ps1 web-build
 .\scripts\tasks.ps1 build
 .\scripts\tasks.ps1 ci
 ```
@@ -50,15 +53,18 @@ Copy-Item .env.example .env
 .\.venv\Scripts\tech-market-ingestion.exe import data\fixtures\jobs.csv --manifest data\manifests\synthetic-jobs.json
 .\.venv\Scripts\tech-market-ingestion.exe provenance --job-id <uuid>
 .\.venv\Scripts\tech-market-ingestion.exe provenance --snapshot-id <uuid>
+.\.venv\Scripts\tech-market-analytics.exe --cutoff 2026-09-20T00:00:00Z
+.\.venv\Scripts\python.exe benchmarks\generate_m3_demo.py --database-url $env:BENCHMARK_DATABASE_URL --iterations 30 --json-output data\benchmarks\analytics\m3-engineering-report.json --markdown-output data\benchmarks\analytics\m3-engineering-report.md
 ```
 
 ## Structure
 
-- `apps/api/`: minimal FastAPI process scaffold
-- `packages/backend/`: M1 corpus plus M2 normalization, taxonomy, extraction, persistence, and evaluation implementation
-- `packages/contracts/`: typed API and provenance contracts
+- `apps/api/`: FastAPI health plus versioned M3 market/job/evidence read API
+- `apps/web/`: minimal Next.js market dashboard and evidence drill-down
+- `packages/backend/`: M1 corpus, M2 normalization/extraction, and M3 deterministic analytics implementation
+- `packages/contracts/`: typed API, market-statistic, pagination, and provenance contracts
 - `migrations/`: explicit frozen PostgreSQL Alembic operations
-- `benchmarks/`: deterministic workload generator and ingestion measurement runner
+- `benchmarks/`: deterministic ingestion and M3 analytics/report benchmark runners
 - `tests/`: contract, unit, and isolated PostgreSQL integration tests
 - `docs/`: architecture, ADRs, configuration, and engineering policy
 - `tasks/`: approved plan and milestone checklist
@@ -74,4 +80,4 @@ Copy-Item .env.example .env
 - ADR-004: `docs/adr/ADR-004-source-permission-and-retention.md`
 - ADR-005: `docs/adr/ADR-005-taxonomy-versioning-and-extraction-authority.md`
 
-Development remains local-first and approximately $0. PostgreSQL can use an existing native service or optional Compose dependency; commands never create or select an unknown database implicitly. Canonical verification commands are `.\scripts\tasks.ps1 test`, `.\scripts\tasks.ps1 test-integration`, and `.\scripts\tasks.ps1 test-evaluation`; current verified totals are 66 non-integration tests, 9 PostgreSQL integration tests, and 6 evaluation-suite tests. The full integration suite ran against the isolated `tech_market_test` database, and a fresh migration reached Alembic head `0002_m2_normalization`.
+Development remains local-first and approximately $0. PostgreSQL can use an existing native service or optional Compose dependency; commands never create or select an unknown database implicitly. M3 adds Alembic revision `0003_m3_analytics`; the checked-in synthetic engineering report records a successful empty-to-head migration, six-job publication, exact corpus-scoped evidence drill-down, and representative query plans/latencies. Current M3 host verification passed 88 Python non-integration tests (including 6 evaluation tests), 23 isolated PostgreSQL integration tests, and 19 Vitest UI tests, plus Ruff format/lint, strict mypy, Git whitespace validation, TypeScript, ESLint, Python wheel, and a production Next.js build. Fresh isolated empty-to-head and seeded M2-to-M3 databases reached `0003_m3_analytics` while preserving representative M2 rows; the checked-in M3 engineering report was regenerated from that publication.

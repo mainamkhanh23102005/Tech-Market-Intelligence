@@ -2,10 +2,10 @@
 
 **Living Technical Paper / Project Research Document**
 
-- **Project status:** M2 Normalization and Skill Intelligence complete
-- **Current phase:** M2 verification complete, including distinct exact-alias and reviewed regex extraction methods
-- **Last updated:** 2026-09-22
-- **Authority:** approved repository plan, milestone checklist, architecture decisions, and verified M0/M1/M2 artifacts
+- **Project status:** M3 Deterministic Analytics and First Useful UI complete pending commit
+- **Current phase:** M3 implementation complete pending final verification and commit; PostgreSQL schema, deterministic market API, and first Next.js dashboard exist; no M4+ retrieval, LLM, vector, or event infrastructure
+- **Last updated:** 2026-09-25
+- **Authority:** approved repository plan, milestone checklist, architecture decisions, and verified M0–M3 artifacts
 
 This document uses three implementation states:
 
@@ -21,7 +21,7 @@ Technical labor-market information is distributed across mutable job postings, h
 
 The planned methodology combines a canonical temporal job corpus, a versioned and inspectable skill taxonomy, evaluated extraction pipelines, deterministic metric definitions, staged retrieval benchmarks, and a bounded tool-calling research assistant. Lexical, dense, hybrid, and reranked retrieval will be compared using labeled relevance judgments rather than assumed performance. Prompt repetition, motivated by prior research on non-reasoning language-model inference, is treated as a project-specific hypothesis to test rather than a production default. Development is constrained to a local-first, open-source-first, near-zero-cost environment. Optional profile or resume comparison is secondary personalization, not the core product, and will avoid unjustified match percentages.
 
-M0 has established the engineering foundation, typed contracts, configuration validation, quality gates, CI workflow, and initial architectural decisions. Corpus ingestion and all market-data functionality remain future work beginning with M1.
+M0 through M3 now establish the engineering foundation, canonical temporal corpus, deterministic normalization/extraction baseline, versioned market analytics, paginated read API, and first evidence drill-down UI. Retrieval, grounded AI assistance, live source adapters, trends, private profile comparison, durable workers, and production hardening remain later milestone work.
 
 ## 2. Motivation and Problem Statement
 
@@ -150,7 +150,7 @@ flowchart LR
   R --> S[Original sources]
 ```
 
-The current M0 contract already defines fields required for a future market fact: corpus snapshot ID, metric version, taxonomy version, numerator, denominator, unit, dimensions, source cutoff, evidence references, coverage warning, and optional metadata. No analytics logic or backing entities have been implemented yet.
+M3 now implements this market-fact chain. Alembic revision `0003_m3_analytics` persists metric definitions, immutable exact-membership corpus snapshots, analytics runs, materialized statistics, coverage warnings, exact evidence snapshot IDs, and metric/taxonomy/normalization/extraction versions. Versioned FastAPI read endpoints resolve published statistics to supporting job snapshots and raw-record hashes, and the Next.js UI exposes that evidence path without treating model output as statistical authority.
 
 ## 8. Data-Source Strategy
 
@@ -294,7 +294,7 @@ flowchart TB
   CI[Windows GitHub Actions] --> P
 ```
 
-The current repository is a minimal Python monorepo foundation. It contains a FastAPI application factory and health endpoint, environment validation, Pydantic API and provenance schemas, unit and contract tests, a PowerShell task runner, exact Python dependency locks, Node runtime pins without Node dependencies, two accepted ADRs, and CI. It contains no production data service, database schema, worker, frontend, market feature, external source adapter, retrieval index, or model call.
+The repository contains a FastAPI application factory and health endpoint, environment validation, Pydantic API and provenance schemas, unit and contract tests, a PowerShell task runner, exact Python dependency locks, Node runtime pins, accepted ADRs, CI, a PostgreSQL schema through Alembic revision `0003_m3_analytics`, a deterministic versioned market analytics API, and a first Next.js dashboard with evidence drill-down. It contains no M4+ retrieval index, LLM or vector infrastructure, event streaming, external source adapter, or model call.
 
 ## 14. Long-Term Target Architecture
 
@@ -438,6 +438,18 @@ Observed failure modes are concrete rather than hypothetical. Four hard-negative
 
 Current verification passed 66 non-integration tests, 9 PostgreSQL integration tests, and 6 evaluation-suite tests. The full integration suite ran against the isolated `tech_market_test` database. A fresh database migrated to Alembic head `0002_m2_normalization`, and migration verification confirmed M1 tables and behavior remain preserved alongside M2 additions. These results establish repository behavior on the verified fixture and test scope only; they do not establish live-source, multilingual, production-scale, or externally adjudicated quality.
 
+### M3 findings and handoff evidence
+
+M3 extends PostgreSQL with revision `0003_m3_analytics`. The schema adds versioned metric definitions, immutable corpus snapshots and exact job/snapshot membership, analytics-run provenance, and materialized market statistics. Published statistics retain value, numerator, denominator, unit, dimensions, source cutoff through the corpus snapshot, metric/taxonomy/normalization/extraction versions, coverage warning, evidence snapshot IDs, and metric-specific metadata. The publication version is `m3-market-1.0.0`; metric versions are `skill-prevalence-1.0.0`, `role-comparison-1.0.0`, `location-distribution-1.0.0`, and `skill-cooccurrence-1.0.0`. Samples below ten logical jobs receive an explicit small-sample warning.
+
+The checked-in golden corpus is version `m3-golden-1.0.0` under CC0-1.0. Its deterministic cutoff selects `snap-a`, `snap-b`, and `snap-z`, excluding both a superseded observation and a future observation while resolving an equal-time tie by greatest snapshot ID. Corpus membership remains authoritative for every cohort denominator: a member without a compatible succeeded/partial normalization remains one explicit unknown/unresolved job rather than disappearing. Compatible normalizations select greatest `created_at`, then greatest normalization ID. Hand-calculated expectations are Python prevalence 3/3, PostgreSQL prevalence 2/3, and Python/PostgreSQL co-occurrence 2/3. Duplicate skills within one logical job count once, and unknown role/location/work-arrangement values remain explicit rather than being silently imputed.
+
+The PostgreSQL synthetic engineering report records six logical jobs and a successful publication with corpus snapshot `cc4eaf2a-e0d3-5cdd-84b5-ccc295c4dfe5`, membership hash `cb068503a0f632ddfc37d94c84faedab5c2848de1b080a696f165ed8aaba3241`, analytics run `35ac794a-4aef-57a9-af18-987d1db69484`, and result hash `94453f1543d1bc868fbf0d8f9d5451b71e1e694ca6a26e28b35a6d663b3229e8`. On the recorded Windows 11 / Python 3.12.10 machine with 24 logical CPUs and about 33.4 GB RAM, 30 warm runs measured p50/p95 latencies of 0.9676/1.4593 ms for corpus membership, 0.9837/1.4538 ms for skill statistics, and 1.0494/1.5081 ms for corpus-scoped evidence lookup. The report renders backend-engineer and data-engineer role-comparison numerators and denominators separately. The corpus is synthetic and tiny, so these timings validate the local path rather than establish production capacity.
+
+The read surface is versioned under `/api/v1`: market statistics are paginated and ranked by descending value with deterministic UUID tie-breaks, jobs are paginated within an immutable corpus snapshot, and evidence lookup requires the same corpus snapshot and returns the job snapshot, escaped description text, safe HTTP(S) source URL when available, and raw-record hash. Foreign-corpus evidence IDs and cursors return not-found. A published run freezes every selected normalization ID, status, method, processor version, normalized dimensions, skills, and observed timestamp; this full canonical input and all semantic statistic fields participate in deterministic input/result hashes. Cutoffs require timezone-aware values and canonicalize to UTC. Role comparison requires its exact published distinct left/right role pair and statistics expose separate cohort numerators and denominators in metadata; role pagination retains the pair and invalid selection receives an explicit UI state. Jobs and statistic evidence links carry corpus scope. The dashboard also exposes cutoff, metric version, coverage warning, evidence links, explicit empty/error states, and the qualification that observed results describe collected sources rather than the whole labor market.
+
+Current M3 host verification records passing Ruff format/lint, strict mypy, Git whitespace validation, 88 Python non-integration tests (including 6 evaluation tests), 23 isolated PostgreSQL integration tests, 19 Vitest UI tests, TypeScript checking, ESLint, Python wheel, and a production Next.js build. Fresh isolated empty-to-head and seeded M2-to-M3 databases reached Alembic head `0003_m3_analytics` while preserving representative M2 rows. The regenerated engineering report records synthetic ingestion, frozen selected-normalization input, exact persisted-value result hashes, known provenance-version enforcement, explicit backend-engineer/data-engineer publication, corpus-scoped evidence resolution and benchmark query, query-plan capture, and 30-run nearest-rank p95 measurements. The corrected deterministic selection and scoped API logic do not change published six-job synthetic metric values; run ID changes because full normalized member data and role pair belong to publication input.
+
 ## 19. Expected Technical Contributions
 
 ### 18.1 Data engineering
@@ -535,7 +547,7 @@ Each direction requires explicit scope approval, a measurable success criterion,
 
 1. `tasks/plan.md` — approved implementation plan, architecture, evaluation strategy, and milestone roadmap.
 2. `tasks/todo.md` — executable milestone checklist and completion gates.
-3. `README.md` — current M0 scope, setup, and quality commands.
+3. `README.md` — current M3 scope, setup, quality commands, and reproducible analytics/report commands.
 4. `docs/architecture/overview.md` — M0 architecture, API conventions, provenance, logging, and error policy.
 5. `docs/architecture/m0-approval.md` — approved M0 product and architecture constraints.
 6. `docs/adr/ADR-001-modular-monolith-first.md` — decision to begin with one modular backend codebase.
@@ -544,11 +556,14 @@ Each direction requires explicit scope approval, a measurable success criterion,
 9. `docs/configuration/secrets.md` — configuration, validation, secret, and logging policy.
 10. `docs/adr/ADR-005-taxonomy-versioning-and-extraction-authority.md` — M2 versioning, deterministic authority, abstention, and evidence decision.
 11. `data/benchmarks/extraction/corpus.json`, `data/benchmarks/extraction/report.json` — M2 synthetic CC0 evaluation corpus and generated report.
-12. `pyproject.toml`, `requirements.in`, `requirements.lock`, `package.json`, `.python-version`, `.nvmrc`, `.github/workflows/ci.yml` — implemented toolchain and CI evidence.
+12. `docs/metrics/market-metrics.md` — M3 metric formulas, denominators, dimensions, version semantics, and coverage warning policy.
+13. `data/benchmarks/analytics/golden-corpus.json`, `data/benchmarks/analytics/report.md` — M3 hand-calculated synthetic golden corpus and expected deterministic results.
+14. `data/benchmarks/analytics/m3-engineering-report.json`, `data/benchmarks/analytics/m3-engineering-report.md` — M3 PostgreSQL publication, query-plan, latency, and limitation evidence.
+15. `pyproject.toml`, `requirements.in`, `requirements.lock`, `package.json`, `.python-version`, `.nvmrc`, `.github/workflows/ci.yml` — implemented toolchain and CI evidence.
 
 ### External research reference
 
-13. Yaniv Leviathan, Matan Kalman, and Yossi Matias. “Prompt Repetition Improves Non-Reasoning LLMs.” arXiv:2512.14982v1.
+16. Yaniv Leviathan, Matan Kalman, and Yossi Matias. “Prompt Repetition Improves Non-Reasoning LLMs.” arXiv:2512.14982v1.
 
 ## 25. Document Maintenance Policy
 

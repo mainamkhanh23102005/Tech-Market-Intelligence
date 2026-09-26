@@ -1,0 +1,15 @@
+{
+  "version": "m3-golden-1.0.0",
+  "license": "CC0-1.0",
+  "cutoff": "2026-09-20T00:00:00Z",
+  "selection": "latest observed_at <= cutoff per logical job; greatest snapshot_id breaks ties",
+  "jobs": [
+    {"job_id":"job-a","snapshot_id":"snap-a-old","observed_at":"2026-09-01T00:00:00Z","role":"backend_engineer","seniority":"junior","location":"London","work_arrangement":"hybrid","skills":["python"]},
+    {"job_id":"job-a","snapshot_id":"snap-a","observed_at":"2026-09-10T00:00:00Z","role":"backend_engineer","seniority":"junior","location":"London","work_arrangement":"hybrid","skills":["python","postgresql","python"]},
+    {"job_id":"job-b","snapshot_id":"snap-b","observed_at":"2026-09-10T00:00:00Z","role":"data_engineer","seniority":null,"location":null,"work_arrangement":null,"skills":["python","postgresql"]},
+    {"job_id":"job-c","snapshot_id":"snap-a-tie","observed_at":"2026-09-10T00:00:00Z","role":null,"seniority":"senior","location":"Hanoi","work_arrangement":"remote","skills":["sql"]},
+    {"job_id":"job-c","snapshot_id":"snap-z","observed_at":"2026-09-10T00:00:00Z","role":null,"seniority":"senior","location":"Hanoi","work_arrangement":"remote","skills":["python"]},
+    {"job_id":"job-d","snapshot_id":"snap-future","observed_at":"2026-09-21T00:00:00Z","role":"backend_engineer","seniority":"senior","location":"London","work_arrangement":"onsite","skills":["go"]}
+  ],
+  "expected": {"selected_snapshots":["snap-a","snap-b","snap-z"],"python":{"numerator":3,"denominator":3},"postgresql":{"numerator":2,"denominator":3},"python_postgresql":{"numerator":2,"denominator":3}}
+}

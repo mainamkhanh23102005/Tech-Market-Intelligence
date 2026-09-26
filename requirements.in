@@ -1,6 +1,7 @@
 # Generated with Python 3.12 and pip 25.0.1.
 # Install with: python -m pip install --require-hashes -r requirements.lock
 alembic==1.16.1
+editables==0.6
 fastapi==0.115.12
 hatchling==1.27.0
 httpx==0.28.1

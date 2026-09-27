@@ -1,0 +1,855 @@
+{
+  "title": "Synthetic M3 deterministic analytics engineering report",
+  "synthetic": true,
+  "fixture": "data/fixtures/m3-demo-jobs.json",
+  "license": "CC0-1.0",
+  "ingestion": {
+    "accepted": 7,
+    "duplicates": 0,
+    "failures": 0
+  },
+  "corpus": {
+    "logical_job_count": 6,
+    "current_snapshot_count": 6,
+    "source_cutoff": "2026-09-20T00:00:00+00:00",
+    "snapshot_id": "cc4eaf2a-e0d3-5cdd-84b5-ccc295c4dfe5",
+    "membership_hash": "cb068503a0f632ddfc37d94c84faedab5c2848de1b080a696f165ed8aaba3241"
+  },
+  "analytics": {
+    "run_id": "35ac794a-4aef-57a9-af18-987d1db69484",
+    "result_hash": "94453f1543d1bc868fbf0d8f9d5451b71e1e694ca6a26e28b35a6d663b3229e8",
+    "versions": {
+      "publication": "m3-market-1.0.0",
+      "taxonomy": "skills-2026-09-22",
+      "normalization": "normalization-2026-09-01",
+      "extraction": "extraction-2026-09-22"
+    },
+    "role_pair": [
+      "backend_engineer",
+      "data_engineer"
+    ],
+    "roles": {
+      "backend_engineer": 2,
+      "data_engineer": 2,
+      "devops_platform_engineer": 1,
+      "unknown": 1
+    },
+    "work_arrangements": {
+      "hybrid": 2,
+      "remote": 2,
+      "unknown": 2
+    },
+    "top_skills": [
+      {
+        "dimensions": {
+          "skill": "aws"
+        },
+        "numerator": 4,
+        "denominator": 6,
+        "value": 0.6666666667,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill": "postgresql"
+        },
+        "numerator": 4,
+        "denominator": 6,
+        "value": 0.6666666667,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill": "python"
+        },
+        "numerator": 4,
+        "denominator": 6,
+        "value": 0.6666666667,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill": "docker"
+        },
+        "numerator": 3,
+        "denominator": 6,
+        "value": 0.5,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill": "kubernetes"
+        },
+        "numerator": 3,
+        "denominator": 6,
+        "value": 0.5,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill": "sql"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill": "fastapi"
+        },
+        "numerator": 1,
+        "denominator": 6,
+        "value": 0.1666666667,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill": "nodejs"
+        },
+        "numerator": 1,
+        "denominator": 6,
+        "value": 0.1666666667,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill": "react"
+        },
+        "numerator": 1,
+        "denominator": 6,
+        "value": 0.1666666667,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill": "typescript"
+        },
+        "numerator": 1,
+        "denominator": 6,
+        "value": 0.1666666667,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      }
+    ],
+    "locations_and_work_modes": [
+      {
+        "dimensions": {
+          "location": "Hanoi"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "location": "London"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "location": "unknown"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      }
+    ],
+    "role_comparison": [
+      {
+        "dimensions": {
+          "skill": "python",
+          "left_role": "backend_engineer",
+          "right_role": "data_engineer"
+        },
+        "numerator": 4,
+        "denominator": 4,
+        "value": 1.0,
+        "warning": "Small sample: 4 distinct logical jobs; interpret cautiously.",
+        "metadata": {
+          "left_numerator": 2,
+          "right_numerator": 2,
+          "left_denominator": 2,
+          "right_denominator": 2
+        }
+      },
+      {
+        "dimensions": {
+          "skill": "aws",
+          "left_role": "backend_engineer",
+          "right_role": "data_engineer"
+        },
+        "numerator": 3,
+        "denominator": 4,
+        "value": 0.75,
+        "warning": "Small sample: 4 distinct logical jobs; interpret cautiously.",
+        "metadata": {
+          "left_numerator": 2,
+          "right_numerator": 1,
+          "left_denominator": 2,
+          "right_denominator": 2
+        }
+      },
+      {
+        "dimensions": {
+          "skill": "postgresql",
+          "left_role": "backend_engineer",
+          "right_role": "data_engineer"
+        },
+        "numerator": 3,
+        "denominator": 4,
+        "value": 0.75,
+        "warning": "Small sample: 4 distinct logical jobs; interpret cautiously.",
+        "metadata": {
+          "left_numerator": 2,
+          "right_numerator": 1,
+          "left_denominator": 2,
+          "right_denominator": 2
+        }
+      },
+      {
+        "dimensions": {
+          "skill": "docker",
+          "left_role": "backend_engineer",
+          "right_role": "data_engineer"
+        },
+        "numerator": 2,
+        "denominator": 4,
+        "value": 0.5,
+        "warning": "Small sample: 4 distinct logical jobs; interpret cautiously.",
+        "metadata": {
+          "left_numerator": 1,
+          "right_numerator": 1,
+          "left_denominator": 2,
+          "right_denominator": 2
+        }
+      },
+      {
+        "dimensions": {
+          "skill": "kubernetes",
+          "left_role": "backend_engineer",
+          "right_role": "data_engineer"
+        },
+        "numerator": 2,
+        "denominator": 4,
+        "value": 0.5,
+        "warning": "Small sample: 4 distinct logical jobs; interpret cautiously.",
+        "metadata": {
+          "left_numerator": 1,
+          "right_numerator": 1,
+          "left_denominator": 2,
+          "right_denominator": 2
+        }
+      },
+      {
+        "dimensions": {
+          "skill": "sql",
+          "left_role": "backend_engineer",
+          "right_role": "data_engineer"
+        },
+        "numerator": 2,
+        "denominator": 4,
+        "value": 0.5,
+        "warning": "Small sample: 4 distinct logical jobs; interpret cautiously.",
+        "metadata": {
+          "left_numerator": 0,
+          "right_numerator": 2,
+          "left_denominator": 2,
+          "right_denominator": 2
+        }
+      },
+      {
+        "dimensions": {
+          "skill": "fastapi",
+          "left_role": "backend_engineer",
+          "right_role": "data_engineer"
+        },
+        "numerator": 1,
+        "denominator": 4,
+        "value": 0.25,
+        "warning": "Small sample: 4 distinct logical jobs; interpret cautiously.",
+        "metadata": {
+          "left_numerator": 1,
+          "right_numerator": 0,
+          "left_denominator": 2,
+          "right_denominator": 2
+        }
+      }
+    ],
+    "cooccurrences": [
+      {
+        "dimensions": {
+          "skill_a": "aws",
+          "skill_b": "postgresql"
+        },
+        "numerator": 4,
+        "denominator": 6,
+        "value": 0.6666666667,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill_a": "aws",
+          "skill_b": "python"
+        },
+        "numerator": 3,
+        "denominator": 6,
+        "value": 0.5,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill_a": "postgresql",
+          "skill_b": "python"
+        },
+        "numerator": 3,
+        "denominator": 6,
+        "value": 0.5,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill_a": "aws",
+          "skill_b": "docker"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill_a": "aws",
+          "skill_b": "kubernetes"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill_a": "docker",
+          "skill_b": "kubernetes"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill_a": "docker",
+          "skill_b": "postgresql"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill_a": "docker",
+          "skill_b": "python"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill_a": "kubernetes",
+          "skill_b": "postgresql"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      },
+      {
+        "dimensions": {
+          "skill_a": "kubernetes",
+          "skill_b": "python"
+        },
+        "numerator": 2,
+        "denominator": 6,
+        "value": 0.3333333333,
+        "warning": "Small sample: 6 distinct logical jobs; interpret cautiously.",
+        "metadata": {}
+      }
+    ]
+  },
+  "benchmark": {
+    "environment": {
+      "os": "Windows-11-10.0.26200-SP0",
+      "python": "3.12.10",
+      "cpu_logical_count": 24,
+      "ram_bytes": 33413771264,
+      "corpus_count": 6,
+      "cold_runs": 1,
+      "warm_runs_per_query": 30
+    },
+    "queries": {
+      "snapshot_members": {
+        "cold_ms": 2.659299992956221,
+        "warm_runs": 30,
+        "p50_ms": 0.9675999754108489,
+        "p95_ms": 1.4593000523746014,
+        "plan": [
+          {
+            "Plan": {
+              "Node Type": "Limit",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Startup Cost": 12.72,
+              "Total Cost": 12.73,
+              "Plan Rows": 5,
+              "Plan Width": 16,
+              "Actual Startup Time": 0.017,
+              "Actual Total Time": 0.018,
+              "Actual Rows": 6,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 2,
+              "Shared Read Blocks": 0,
+              "Shared Dirtied Blocks": 0,
+              "Shared Written Blocks": 0,
+              "Local Hit Blocks": 0,
+              "Local Read Blocks": 0,
+              "Local Dirtied Blocks": 0,
+              "Local Written Blocks": 0,
+              "Temp Read Blocks": 0,
+              "Temp Written Blocks": 0,
+              "Plans": [
+                {
+                  "Node Type": "Sort",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 12.72,
+                  "Total Cost": 12.73,
+                  "Plan Rows": 5,
+                  "Plan Width": 16,
+                  "Actual Startup Time": 0.016,
+                  "Actual Total Time": 0.017,
+                  "Actual Rows": 6,
+                  "Actual Loops": 1,
+                  "Sort Key": [
+                    "job_snapshot_id"
+                  ],
+                  "Sort Method": "quicksort",
+                  "Sort Space Used": 25,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 2,
+                  "Shared Read Blocks": 0,
+                  "Shared Dirtied Blocks": 0,
+                  "Shared Written Blocks": 0,
+                  "Local Hit Blocks": 0,
+                  "Local Read Blocks": 0,
+                  "Local Dirtied Blocks": 0,
+                  "Local Written Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0,
+                  "Plans": [
+                    {
+                      "Node Type": "Bitmap Heap Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Relation Name": "corpus_snapshot_members",
+                      "Alias": "corpus_snapshot_members",
+                      "Startup Cost": 4.19,
+                      "Total Cost": 12.66,
+                      "Plan Rows": 5,
+                      "Plan Width": 16,
+                      "Actual Startup Time": 0.006,
+                      "Actual Total Time": 0.007,
+                      "Actual Rows": 6,
+                      "Actual Loops": 1,
+                      "Recheck Cond": "(corpus_snapshot_id = 'cc4eaf2a-e0d3-5cdd-84b5-ccc295c4dfe5'::uuid)",
+                      "Rows Removed by Index Recheck": 0,
+                      "Exact Heap Blocks": 1,
+                      "Lossy Heap Blocks": 0,
+                      "Shared Hit Blocks": 2,
+                      "Shared Read Blocks": 0,
+                      "Shared Dirtied Blocks": 0,
+                      "Shared Written Blocks": 0,
+                      "Local Hit Blocks": 0,
+                      "Local Read Blocks": 0,
+                      "Local Dirtied Blocks": 0,
+                      "Local Written Blocks": 0,
+                      "Temp Read Blocks": 0,
+                      "Temp Written Blocks": 0,
+                      "Plans": [
+                        {
+                          "Node Type": "Bitmap Index Scan",
+                          "Parent Relationship": "Outer",
+                          "Parallel Aware": false,
+                          "Async Capable": false,
+                          "Index Name": "uq_corpus_member_snapshot",
+                          "Startup Cost": 0.0,
+                          "Total Cost": 4.19,
+                          "Plan Rows": 5,
+                          "Plan Width": 0,
+                          "Actual Startup Time": 0.004,
+                          "Actual Total Time": 0.004,
+                          "Actual Rows": 6,
+                          "Actual Loops": 1,
+                          "Index Cond": "(corpus_snapshot_id = 'cc4eaf2a-e0d3-5cdd-84b5-ccc295c4dfe5'::uuid)",
+                          "Shared Hit Blocks": 1,
+                          "Shared Read Blocks": 0,
+                          "Shared Dirtied Blocks": 0,
+                          "Shared Written Blocks": 0,
+                          "Local Hit Blocks": 0,
+                          "Local Read Blocks": 0,
+                          "Local Dirtied Blocks": 0,
+                          "Local Written Blocks": 0,
+                          "Temp Read Blocks": 0,
+                          "Temp Written Blocks": 0
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "Planning": {
+              "Shared Hit Blocks": 0,
+              "Shared Read Blocks": 0,
+              "Shared Dirtied Blocks": 0,
+              "Shared Written Blocks": 0,
+              "Local Hit Blocks": 0,
+              "Local Read Blocks": 0,
+              "Local Dirtied Blocks": 0,
+              "Local Written Blocks": 0,
+              "Temp Read Blocks": 0,
+              "Temp Written Blocks": 0
+            },
+            "Planning Time": 0.094,
+            "Triggers": [],
+            "Execution Time": 0.099
+          }
+        ]
+      },
+      "skill_statistics": {
+        "cold_ms": 2.7460999554023147,
+        "warm_runs": 30,
+        "p50_ms": 0.9836999815888703,
+        "p95_ms": 1.4538000104948878,
+        "plan": [
+          {
+            "Plan": {
+              "Node Type": "Limit",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Startup Cost": 8.17,
+              "Total Cost": 8.18,
+              "Plan Rows": 1,
+              "Plan Width": 44,
+              "Actual Startup Time": 0.051,
+              "Actual Total Time": 0.052,
+              "Actual Rows": 10,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 2,
+              "Shared Read Blocks": 0,
+              "Shared Dirtied Blocks": 0,
+              "Shared Written Blocks": 0,
+              "Local Hit Blocks": 0,
+              "Local Read Blocks": 0,
+              "Local Dirtied Blocks": 0,
+              "Local Written Blocks": 0,
+              "Temp Read Blocks": 0,
+              "Temp Written Blocks": 0,
+              "Plans": [
+                {
+                  "Node Type": "Sort",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Startup Cost": 8.17,
+                  "Total Cost": 8.18,
+                  "Plan Rows": 1,
+                  "Plan Width": 44,
+                  "Actual Startup Time": 0.05,
+                  "Actual Total Time": 0.051,
+                  "Actual Rows": 10,
+                  "Actual Loops": 1,
+                  "Sort Key": [
+                    "value DESC",
+                    "id"
+                  ],
+                  "Sort Method": "quicksort",
+                  "Sort Space Used": 25,
+                  "Sort Space Type": "Memory",
+                  "Shared Hit Blocks": 2,
+                  "Shared Read Blocks": 0,
+                  "Shared Dirtied Blocks": 0,
+                  "Shared Written Blocks": 0,
+                  "Local Hit Blocks": 0,
+                  "Local Read Blocks": 0,
+                  "Local Dirtied Blocks": 0,
+                  "Local Written Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0,
+                  "Plans": [
+                    {
+                      "Node Type": "Index Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Scan Direction": "Forward",
+                      "Index Name": "ix_market_statistics_metric_dimensions",
+                      "Relation Name": "market_statistics",
+                      "Alias": "market_statistics",
+                      "Startup Cost": 0.14,
+                      "Total Cost": 8.16,
+                      "Plan Rows": 1,
+                      "Plan Width": 44,
+                      "Actual Startup Time": 0.026,
+                      "Actual Total Time": 0.028,
+                      "Actual Rows": 10,
+                      "Actual Loops": 1,
+                      "Index Cond": "((metric_key)::text = 'skill_prevalence'::text)",
+                      "Rows Removed by Index Recheck": 0,
+                      "Filter": "(analytics_run_id = '35ac794a-4aef-57a9-af18-987d1db69484'::uuid)",
+                      "Rows Removed by Filter": 0,
+                      "Shared Hit Blocks": 2,
+                      "Shared Read Blocks": 0,
+                      "Shared Dirtied Blocks": 0,
+                      "Shared Written Blocks": 0,
+                      "Local Hit Blocks": 0,
+                      "Local Read Blocks": 0,
+                      "Local Dirtied Blocks": 0,
+                      "Local Written Blocks": 0,
+                      "Temp Read Blocks": 0,
+                      "Temp Written Blocks": 0
+                    }
+                  ]
+                }
+              ]
+            },
+            "Planning": {
+              "Shared Hit Blocks": 0,
+              "Shared Read Blocks": 0,
+              "Shared Dirtied Blocks": 0,
+              "Shared Written Blocks": 0,
+              "Local Hit Blocks": 0,
+              "Local Read Blocks": 0,
+              "Local Dirtied Blocks": 0,
+              "Local Written Blocks": 0,
+              "Temp Read Blocks": 0,
+              "Temp Written Blocks": 0
+            },
+            "Planning Time": 0.1,
+            "Triggers": [],
+            "Execution Time": 0.079
+          }
+        ]
+      },
+      "evidence": {
+        "cold_ms": 1.5798000385984778,
+        "warm_runs": 30,
+        "p50_ms": 1.0494000161997974,
+        "p95_ms": 1.5081000747159123,
+        "plan": [
+          {
+            "Plan": {
+              "Node Type": "Nested Loop",
+              "Parallel Aware": false,
+              "Async Capable": false,
+              "Join Type": "Inner",
+              "Startup Cost": 0.44,
+              "Total Cost": 24.55,
+              "Plan Rows": 1,
+              "Plan Width": 1194,
+              "Actual Startup Time": 0.109,
+              "Actual Total Time": 0.112,
+              "Actual Rows": 1,
+              "Actual Loops": 1,
+              "Inner Unique": false,
+              "Shared Hit Blocks": 6,
+              "Shared Read Blocks": 0,
+              "Shared Dirtied Blocks": 0,
+              "Shared Written Blocks": 0,
+              "Local Hit Blocks": 0,
+              "Local Read Blocks": 0,
+              "Local Dirtied Blocks": 0,
+              "Local Written Blocks": 0,
+              "Temp Read Blocks": 0,
+              "Temp Written Blocks": 0,
+              "Plans": [
+                {
+                  "Node Type": "Nested Loop",
+                  "Parent Relationship": "Outer",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Join Type": "Inner",
+                  "Startup Cost": 0.29,
+                  "Total Cost": 16.37,
+                  "Plan Rows": 1,
+                  "Plan Width": 1194,
+                  "Actual Startup Time": 0.046,
+                  "Actual Total Time": 0.048,
+                  "Actual Rows": 1,
+                  "Actual Loops": 1,
+                  "Inner Unique": true,
+                  "Shared Hit Blocks": 4,
+                  "Shared Read Blocks": 0,
+                  "Shared Dirtied Blocks": 0,
+                  "Shared Written Blocks": 0,
+                  "Local Hit Blocks": 0,
+                  "Local Read Blocks": 0,
+                  "Local Dirtied Blocks": 0,
+                  "Local Written Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0,
+                  "Plans": [
+                    {
+                      "Node Type": "Index Scan",
+                      "Parent Relationship": "Outer",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Scan Direction": "Forward",
+                      "Index Name": "uq_job_snapshots_id_job",
+                      "Relation Name": "job_snapshots",
+                      "Alias": "js",
+                      "Startup Cost": 0.14,
+                      "Total Cost": 8.16,
+                      "Plan Rows": 1,
+                      "Plan Width": 1064,
+                      "Actual Startup Time": 0.029,
+                      "Actual Total Time": 0.03,
+                      "Actual Rows": 1,
+                      "Actual Loops": 1,
+                      "Index Cond": "(id = '3f52d6cb-3b18-569f-af65-79ffb364e7e6'::uuid)",
+                      "Rows Removed by Index Recheck": 0,
+                      "Shared Hit Blocks": 2,
+                      "Shared Read Blocks": 0,
+                      "Shared Dirtied Blocks": 0,
+                      "Shared Written Blocks": 0,
+                      "Local Hit Blocks": 0,
+                      "Local Read Blocks": 0,
+                      "Local Dirtied Blocks": 0,
+                      "Local Written Blocks": 0,
+                      "Temp Read Blocks": 0,
+                      "Temp Written Blocks": 0
+                    },
+                    {
+                      "Node Type": "Index Scan",
+                      "Parent Relationship": "Inner",
+                      "Parallel Aware": false,
+                      "Async Capable": false,
+                      "Scan Direction": "Forward",
+                      "Index Name": "raw_records_pkey",
+                      "Relation Name": "raw_records",
+                      "Alias": "rr",
+                      "Startup Cost": 0.15,
+                      "Total Cost": 8.17,
+                      "Plan Rows": 1,
+                      "Plan Width": 162,
+                      "Actual Startup Time": 0.014,
+                      "Actual Total Time": 0.014,
+                      "Actual Rows": 1,
+                      "Actual Loops": 1,
+                      "Index Cond": "(id = js.raw_record_id)",
+                      "Rows Removed by Index Recheck": 0,
+                      "Shared Hit Blocks": 2,
+                      "Shared Read Blocks": 0,
+                      "Shared Dirtied Blocks": 0,
+                      "Shared Written Blocks": 0,
+                      "Local Hit Blocks": 0,
+                      "Local Read Blocks": 0,
+                      "Local Dirtied Blocks": 0,
+                      "Local Written Blocks": 0,
+                      "Temp Read Blocks": 0,
+                      "Temp Written Blocks": 0
+                    }
+                  ]
+                },
+                {
+                  "Node Type": "Index Only Scan",
+                  "Parent Relationship": "Inner",
+                  "Parallel Aware": false,
+                  "Async Capable": false,
+                  "Scan Direction": "Forward",
+                  "Index Name": "uq_corpus_member_snapshot",
+                  "Relation Name": "corpus_snapshot_members",
+                  "Alias": "csm",
+                  "Startup Cost": 0.15,
+                  "Total Cost": 8.17,
+                  "Plan Rows": 1,
+                  "Plan Width": 16,
+                  "Actual Startup Time": 0.061,
+                  "Actual Total Time": 0.062,
+                  "Actual Rows": 1,
+                  "Actual Loops": 1,
+                  "Index Cond": "((corpus_snapshot_id = 'cc4eaf2a-e0d3-5cdd-84b5-ccc295c4dfe5'::uuid) AND (job_snapshot_id = '3f52d6cb-3b18-569f-af65-79ffb364e7e6'::uuid))",
+                  "Rows Removed by Index Recheck": 0,
+                  "Heap Fetches": 1,
+                  "Shared Hit Blocks": 2,
+                  "Shared Read Blocks": 0,
+                  "Shared Dirtied Blocks": 0,
+                  "Shared Written Blocks": 0,
+                  "Local Hit Blocks": 0,
+                  "Local Read Blocks": 0,
+                  "Local Dirtied Blocks": 0,
+                  "Local Written Blocks": 0,
+                  "Temp Read Blocks": 0,
+                  "Temp Written Blocks": 0
+                }
+              ]
+            },
+            "Planning": {
+              "Shared Hit Blocks": 0,
+              "Shared Read Blocks": 0,
+              "Shared Dirtied Blocks": 0,
+              "Shared Written Blocks": 0,
+              "Local Hit Blocks": 0,
+              "Local Read Blocks": 0,
+              "Local Dirtied Blocks": 0,
+              "Local Written Blocks": 0,
+              "Temp Read Blocks": 0,
+              "Temp Written Blocks": 0
+            },
+            "Planning Time": 0.345,
+            "Triggers": [],
+            "Execution Time": 0.193
+          }
+        ]
+      }
+    }
+  },
+  "limitations": [
+    "All records are synthetic and cannot support real labor-market claims.",
+    "Six logical jobs are too small for representative inference.",
+    "Observed dates and revisions are fixture-authored, not live-source history.",
+    "Timings are local single-process measurements, not production load tests."
+  ]
+}

@@ -1,0 +1,8 @@
+source_id,canonical_url,title,company,location,description,observed_at,metadata
+m3-001,https://example.invalid/m3/001,Junior Backend Engineer,Synthetic Alpha,"Hybrid - London, UK","Build Python FastAPI services with PostgreSQL and Docker.",2026-09-01T00:00:00Z,"{\"cohort\":\"synthetic-m3\"}"
+m3-002,https://example.invalid/m3/002,Senior Backend Engineer,Synthetic Beta,Remote,"Develop Python APIs with AWS PostgreSQL and Kubernetes.",2026-09-02T00:00:00Z,"{\"cohort\":\"synthetic-m3\"}"
+m3-003,https://example.invalid/m3/003,Data Engineer,Synthetic Gamma,"Hanoi, Vietnam","Create Python SQL pipelines using Airflow PostgreSQL and AWS.",2026-09-03T00:00:00Z,"{\"cohort\":\"synthetic-m3\"}"
+m3-004,https://example.invalid/m3/004,Senior Data Engineer,Synthetic Delta,Remote,"Operate Spark Python SQL pipelines with Docker and Kubernetes.",2026-09-04T00:00:00Z,"{\"cohort\":\"synthetic-m3\"}"
+m3-005,https://example.invalid/m3/005,Platform Engineer,Synthetic Epsilon,"Hybrid - London, UK","Run AWS Kubernetes Docker PostgreSQL infrastructure.",2026-09-05T00:00:00Z,"{\"cohort\":\"synthetic-m3\"}"
+m3-006,https://example.invalid/m3/006,Frontend Engineer,Synthetic Zeta,"Hanoi, Vietnam","Build React TypeScript Node.js web applications.",2026-09-06T00:00:00Z,"{\"cohort\":\"synthetic-m3\"}"
+m3-001,https://example.invalid/m3/001,Junior Backend Engineer,Synthetic Alpha,"Hybrid - London, UK","Build Python FastAPI services with PostgreSQL Docker and AWS.",2026-09-10T00:00:00Z,"{\"cohort\":\"synthetic-m3\",\"revision\":2}"

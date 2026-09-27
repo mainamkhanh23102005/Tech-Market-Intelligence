@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
@@ -9,6 +10,8 @@ from sqlalchemy import (
     ForeignKey,
     ForeignKeyConstraint,
     Index,
+    Integer,
+    Numeric,
     String,
     Text,
     UniqueConstraint,
@@ -86,7 +89,10 @@ class JobSnapshot(Base):
     description: Mapped[str] = mapped_column(Text)
     observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    __table_args__ = (UniqueConstraint("job_id", "content_hash", "processor_version"),)
+    __table_args__ = (
+        UniqueConstraint("job_id", "content_hash", "processor_version"),
+        UniqueConstraint("id", "job_id", name="uq_job_snapshots_id_job"),
+    )
 
 
 class ProcessingAttempt(Base):
@@ -288,6 +294,124 @@ class SkillCandidate(Base):
             "evidence_end",
             name="uq_skill_candidates_evidence",
         ),
+    )
+
+
+class MetricDefinitionRecord(Base):
+    __tablename__ = "metric_definitions"
+    key: Mapped[str] = mapped_column(String(128), primary_key=True)
+    version: Mapped[str] = mapped_column(String(64), primary_key=True)
+    formula: Mapped[str] = mapped_column(Text)
+    denominator: Mapped[str] = mapped_column(Text)
+    dimensions: Mapped[list[str]] = mapped_column(JSONB)
+    unit: Mapped[str] = mapped_column(String(32))
+
+
+class CorpusSnapshot(Base):
+    __tablename__ = "corpus_snapshots"
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True)
+    source_cutoff: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    membership_hash: Mapped[str] = mapped_column(String(64))
+    job_count: Mapped[int] = mapped_column(Integer)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    __table_args__ = (
+        CheckConstraint("job_count >= 0", name="ck_corpus_snapshots_job_count"),
+        UniqueConstraint("source_cutoff", "membership_hash", name="uq_corpus_snapshot_identity"),
+    )
+
+
+class CorpusSnapshotMember(Base):
+    __tablename__ = "corpus_snapshot_members"
+    corpus_snapshot_id: Mapped[UUID] = mapped_column(
+        ForeignKey("corpus_snapshots.id", ondelete="CASCADE"), primary_key=True
+    )
+    job_id: Mapped[UUID] = mapped_column(ForeignKey("jobs.id"), primary_key=True)
+    job_snapshot_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True))
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["job_snapshot_id", "job_id"], ["job_snapshots.id", "job_snapshots.job_id"]
+        ),
+        UniqueConstraint("corpus_snapshot_id", "job_snapshot_id", name="uq_corpus_member_snapshot"),
+        Index("ix_corpus_members_snapshot", "job_snapshot_id"),
+    )
+
+
+class AnalyticsRun(Base):
+    __tablename__ = "analytics_runs"
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True)
+    corpus_snapshot_id: Mapped[UUID] = mapped_column(ForeignKey("corpus_snapshots.id"))
+    metric_version: Mapped[str] = mapped_column(String(64))
+    taxonomy_version: Mapped[str] = mapped_column(String(64))
+    normalization_version: Mapped[str] = mapped_column(String(64))
+    extraction_version: Mapped[str] = mapped_column(String(64))
+    parameters: Mapped[dict[str, Any]] = mapped_column(JSONB)
+    status: Mapped[str] = mapped_column(String(32))
+    input_hash: Mapped[str] = mapped_column(String(64))
+    result_hash: Mapped[str | None] = mapped_column(String(64))
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('RUNNING', 'SUCCEEDED', 'FAILED')", name="ck_analytics_runs_status"
+        ),
+    )
+
+
+class AnalyticsRunMember(Base):
+    __tablename__ = "analytics_run_members"
+    analytics_run_id: Mapped[UUID] = mapped_column(
+        ForeignKey("analytics_runs.id", ondelete="CASCADE"), primary_key=True
+    )
+    job_id: Mapped[UUID] = mapped_column(ForeignKey("jobs.id"), primary_key=True)
+    job_snapshot_id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True))
+    observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    normalization_id: Mapped[UUID | None] = mapped_column(PGUUID(as_uuid=True))
+    normalization_status: Mapped[str] = mapped_column(String(32))
+    normalization_method: Mapped[str | None] = mapped_column(String(64))
+    processor_version: Mapped[str | None] = mapped_column(String(64))
+    role: Mapped[str | None] = mapped_column(String(128))
+    seniority: Mapped[str | None] = mapped_column(String(128))
+    location: Mapped[str | None] = mapped_column(String(256))
+    work_arrangement: Mapped[str | None] = mapped_column(String(64))
+    skills: Mapped[list[str]] = mapped_column(JSONB)
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["job_snapshot_id", "job_id"], ["job_snapshots.id", "job_snapshots.job_id"]
+        ),
+        Index("ix_analytics_run_members_snapshot", "job_snapshot_id"),
+    )
+
+
+class MarketStatistic(Base):
+    __tablename__ = "market_statistics"
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True)
+    analytics_run_id: Mapped[UUID] = mapped_column(
+        ForeignKey("analytics_runs.id", ondelete="CASCADE")
+    )
+    metric_key: Mapped[str] = mapped_column(String(128))
+    metric_version: Mapped[str] = mapped_column(String(64))
+    value: Mapped[Decimal] = mapped_column(Numeric(20, 10))
+    numerator: Mapped[int] = mapped_column(Integer)
+    denominator: Mapped[int] = mapped_column(Integer)
+    unit: Mapped[str] = mapped_column(String(32))
+    dimensions: Mapped[dict[str, str]] = mapped_column(JSONB)
+    coverage_warning: Mapped[str | None] = mapped_column(Text)
+    evidence_snapshot_ids: Mapped[list[str]] = mapped_column(JSONB)
+    metadata_: Mapped[dict[str, Any]] = mapped_column("metadata", JSONB)
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ["metric_key", "metric_version"],
+            ["metric_definitions.key", "metric_definitions.version"],
+        ),
+        CheckConstraint("numerator >= 0", name="ck_market_statistics_numerator"),
+        CheckConstraint("denominator > 0", name="ck_market_statistics_denominator"),
+        CheckConstraint("numerator <= denominator", name="ck_market_statistics_cardinality"),
+        CheckConstraint("value >= 0 AND value <= 1", name="ck_market_statistics_value"),
+        CheckConstraint(
+            "value = ROUND(numerator::numeric / denominator, 10)",
+            name="ck_market_statistics_ratio",
+        ),
+        Index("ix_market_statistics_metric_dimensions", "metric_key", "metric_version"),
     )
 
 

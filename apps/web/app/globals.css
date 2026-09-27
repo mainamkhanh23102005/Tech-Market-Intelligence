@@ -1,0 +1,203 @@
+:root {
+  color-scheme: light;
+  font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+  background: #f3f1eb;
+  color: #17201d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  width: min(70rem, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 3rem 0;
+}
+
+header {
+  border-bottom: 2px solid #17201d;
+  padding-bottom: 2rem;
+  margin-bottom: 2rem;
+}
+
+h1 {
+  font-size: clamp(2.3rem, 8vw, 5rem);
+  line-height: 0.95;
+  max-width: 12ch;
+  margin: 0.4rem 0 1rem;
+}
+
+h2 {
+  margin-top: 2rem;
+}
+
+h1,
+h2,
+.skills strong {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.eyebrow {
+  color: #32614f;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.skills {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.skills > li,
+article,
+.empty {
+  background: #fff;
+  border: 1px solid #b8beb8;
+  padding: 1.25rem;
+}
+
+.skills strong {
+  font-size: 1.25rem;
+  text-transform: capitalize;
+}
+
+.skills span {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+meter {
+  width: 100%;
+  height: 1.2rem;
+  margin: 1rem 0;
+  accent-color: #32614f;
+}
+
+.comparison {
+  display: grid;
+  gap: 0.25rem;
+}
+
+dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+}
+
+dl div {
+  min-width: 10rem;
+}
+
+dt {
+  color: #52605b;
+  font-size: 0.85rem;
+}
+
+dd {
+  margin: 0.25rem 0 0;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+a {
+  color: #174f3b;
+  font-weight: 700;
+  text-underline-offset: 0.2em;
+}
+
+a:focus-visible {
+  outline: 3px solid #d28122;
+  outline-offset: 3px;
+}
+
+.warning {
+  border-left: 4px solid #d28122;
+  padding-left: 0.75rem;
+}
+
+.hash {
+  overflow-wrap: anywhere;
+}
+
+.description {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.filters label {
+  grid-column: 1 / -1;
+  font-weight: 700;
+}
+
+input,
+button {
+  min-height: 2.75rem;
+  font: inherit;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+}
+
+button {
+  border: 0;
+  background: #174f3b;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+}
+
+.jobs {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.jobs li {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #b8beb8;
+  padding: 1rem;
+}
+
+.next {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+@media (min-width: 48rem) {
+  .skills {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .comparison {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  main {
+    padding-top: 5rem;
+  }
+}

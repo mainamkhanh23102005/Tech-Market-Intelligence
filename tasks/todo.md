@@ -58,16 +58,16 @@ Verify: `make test test-integration test-evaluation`. Current result: 66 non-int
 
 ## M3 — Deterministic Analytics and UI
 
-- [ ] M3.1 Define metric formulas, dimensions, denominators, coverage warnings, and versions.
-- [ ] M3.2 Build immutable corpus snapshots and analytics run lifecycle.
-- [ ] M3.3 Build skill distribution, role comparison, and co-occurrence aggregates from golden corpus.
-- [ ] M3.4 Expose paginated, versioned market/job/evidence APIs.
-- [ ] M3.5 Build minimal accessible dashboard and evidence drill-down.
-- [ ] M3.6 Benchmark representative queries and inspect plans.
+- [x] M3.1 Define metric formulas, dimensions, denominators, coverage warnings, and versions.
+- [x] M3.2 Build immutable corpus snapshots and analytics run lifecycle.
+- [x] M3.3 Build skill distribution, role comparison, and co-occurrence aggregates from golden corpus.
+- [x] M3.4 Expose paginated, versioned market/job/evidence APIs.
+- [x] M3.5 Build minimal accessible dashboard and evidence drill-down.
+- [x] M3.6 Benchmark representative queries and inspect plans.
 
 Acceptance: every statistic includes value, numerator, denominator, unit, dimensions, cutoff, versions, coverage warning, and evidence.
 
-Verify: `make lint typecheck test test-integration build`; end-to-end statistic-to-source check.
+Verify: Ruff format/lint, strict mypy, Git whitespace, Python wheel, and Next.js production build pass. Current M3 host verification passed 88 Python non-integration tests (including 6 evaluation tests), 23 isolated PostgreSQL integration tests, and 19 Vitest UI tests. Fresh isolated empty-to-head and seeded M2-to-M3 migration paths reached `0003_m3_analytics` while preserving representative M2 rows. Regenerated synthetic engineering evidence records frozen selected-normalization inputs, persisted-value result hashes, authoritative provenance-version rejection, corpus-authoritative denominators, deterministic normalization ID tie-break, corpus-scoped evidence/cursors and benchmark query, explicit backend-engineer/data-engineer role pair, and nearest-rank 30-run latency measurements.
 
 ## M4 — Retrieval
 

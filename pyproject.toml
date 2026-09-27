@@ -20,6 +20,7 @@ dependencies = [
 [project.scripts]
 tech-market-ingestion = "tech_market_backend.ingestion.cli:main"
 tech-market-evaluation = "tech_market_backend.taxonomy.evaluation_cli:main"
+tech-market-analytics = "tech_market_backend.analytics.cli:main"
 
 [project.optional-dependencies]
 dev = [

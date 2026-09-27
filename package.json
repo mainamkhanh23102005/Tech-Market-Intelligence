@@ -6,5 +6,30 @@
   "engines": {
     "node": ">=22.22.0 <23",
     "npm": ">=10 <12"
+  },
+  "scripts": {
+    "web:dev": "next dev apps/web",
+    "web:build": "next build apps/web",
+    "web:lint": "eslint apps/web",
+    "web:typecheck": "tsc --noEmit -p apps/web/tsconfig.json",
+    "web:test": "vitest run --configLoader runner"
+  },
+  "dependencies": {
+    "next": "16.3.5",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.3.0",
+    "@types/node": "22.15.29",
+    "@types/react": "19.1.6",
+    "@types/react-dom": "19.1.5",
+    "eslint": "9.28.0",
+    "eslint-config-next": "16.3.5",
+    "jsdom": "26.1.0",
+    "prettier": "3.5.3",
+    "typescript": "5.8.3",
+    "vitest": "3.2.7"
   }
 }

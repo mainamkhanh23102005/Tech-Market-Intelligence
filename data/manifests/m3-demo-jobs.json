@@ -1,0 +1,11 @@
+{
+  "source_namespace": "synthetic.m3.jobs.v1",
+  "source_name": "Synthetic M3 Analytics Jobs",
+  "publisher": "Tech Market Intelligence project",
+  "license_name": "CC0-1.0",
+  "permission_basis": "Project-authored synthetic records released for deterministic analytics testing.",
+  "status": "approved",
+  "reviewed_at": "2026-09-22T00:00:00Z",
+  "source_url": null,
+  "attribution": "Synthetic data; no real people, employers, or postings."
+}

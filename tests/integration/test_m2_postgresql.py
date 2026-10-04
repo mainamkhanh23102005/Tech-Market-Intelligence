@@ -13,7 +13,7 @@ from sqlalchemy.engine import make_url
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
 from tech_market_api import create_app
-from tech_market_api.market import get_market_reader
+from tech_market_api.market import MarketNotFoundError, get_market_reader
 from tech_market_api.postgres_reader import PostgresMarketReader
 from tech_market_backend.analytics.engine import AnalyticsEngine, GoldenJob, Statistic
 from tech_market_backend.analytics.persistence import AnalyticsPersistence
@@ -316,6 +316,171 @@ def test_m3_publication_is_complete_deterministic_and_provenance_resolves(
     assert market.data[0].versions.taxonomy == CATALOG_VERSION
     assert jobs.data[0].snapshot_id == str(snapshot_id)
     assert evidence.raw_record_hash == "a" * 64
+
+
+def test_m4_structured_search_is_snapshot_pinned_and_cursor_scope_bound(migrated_database) -> None:
+    _, sessions = migrated_database
+    snapshot_ids = [
+        _job_row(sessions, title="Backend Engineer", description="A", location="Remote"),
+        _job_row(sessions, title="Backend Engineer", description="B", location="Remote"),
+        _job_row(sessions, title="Data Engineer", description="C", location="Hanoi"),
+    ]
+    for snapshot_id in snapshot_ids[:2]:
+        TaxonomyService(sessions).normalize_snapshot(snapshot_id)
+    cutoff = datetime.now(UTC)
+    run_id = AnalyticsPersistence(sessions).publish(cutoff, _versions())
+    with sessions() as session:
+        run = session.get(AnalyticsRun, run_id)
+        assert run is not None
+        corpus_id = run.corpus_snapshot_id
+    reader = PostgresMarketReader(sessions)
+    first = reader.search_jobs(
+        corpus_id,
+        run_id,
+        query=None,
+        role="backend_engineer",
+        seniority=None,
+        location=None,
+        skills=[],
+        observed_from=None,
+        observed_to=None,
+        cursor=None,
+        limit=1,
+    )
+    assert len(first.data) == 1
+    assert first.page.has_more
+    assert first.data[0].evidence_url.endswith(f"?snapshot={corpus_id}")
+    second = reader.search_jobs(
+        corpus_id,
+        run_id,
+        query=None,
+        role="backend_engineer",
+        seniority=None,
+        location=None,
+        skills=[],
+        observed_from=None,
+        observed_to=None,
+        cursor=first.page.next_cursor,
+        limit=1,
+    )
+    assert len(second.data) == 1
+    assert second.data[0].snapshot_id != first.data[0].snapshot_id
+    with pytest.raises(MarketNotFoundError, match="Search cursor is invalid"):
+        reader.search_jobs(
+            corpus_id,
+            run_id,
+            query=None,
+            role="data_engineer",
+            seniority=None,
+            location=None,
+            skills=[],
+            observed_from=None,
+            observed_to=None,
+            cursor=first.page.next_cursor,
+            limit=1,
+        )
+    _job_row(
+        sessions,
+        title="Platform Engineer",
+        description="New posting for foreign corpus",
+        location="Remote",
+    )
+    foreign_corpus = AnalyticsPersistence(sessions).create_corpus_snapshot(datetime.now(UTC))
+    assert foreign_corpus != corpus_id
+    with pytest.raises(MarketNotFoundError, match="Search cursor is invalid"):
+        reader.search_jobs(
+            foreign_corpus,
+            run_id,
+            query=None,
+            role="backend_engineer",
+            seniority=None,
+            location=None,
+            skills=[],
+            observed_from=None,
+            observed_to=None,
+            cursor=first.page.next_cursor,
+            limit=1,
+        )
+
+
+def test_m4_keyset_pagination_is_stable_when_observed_at_ties(migrated_database) -> None:
+    from datetime import timedelta
+
+    from tech_market_backend.platform.models import JobSnapshot
+
+    _, sessions = migrated_database
+    snapshot_ids = [
+        _job_row(
+            sessions,
+            title="Backend Engineer",
+            description="Tie A",
+            location="Remote",
+        ),
+        _job_row(
+            sessions,
+            title="Backend Engineer",
+            description="Tie B",
+            location="Remote",
+        ),
+        _job_row(
+            sessions,
+            title="Backend Engineer",
+            description="Tie C",
+            location="Remote",
+        ),
+    ]
+
+    tied_observed_at = datetime.now(UTC)
+    with sessions() as session:
+        for snapshot_id in snapshot_ids:
+            snapshot = session.get(JobSnapshot, snapshot_id)
+            assert snapshot is not None
+            snapshot.observed_at = tied_observed_at
+        session.commit()
+
+    for snapshot_id in snapshot_ids:
+        TaxonomyService(sessions).normalize_snapshot(snapshot_id)
+
+    run_id = AnalyticsPersistence(sessions).publish(
+        tied_observed_at + timedelta(seconds=1),
+        _versions(),
+    )
+    with sessions() as session:
+        run = session.get(AnalyticsRun, run_id)
+        assert run is not None
+        corpus_id = run.corpus_snapshot_id
+
+    reader = PostgresMarketReader(sessions)
+    seen: list[UUID] = []
+    cursor: str | None = None
+
+    for index in range(3):
+        page = reader.search_jobs(
+            corpus_id,
+            run_id,
+            query=None,
+            role="backend_engineer",
+            seniority=None,
+            location=None,
+            skills=[],
+            observed_from=None,
+            observed_to=None,
+            cursor=cursor,
+            limit=1,
+        )
+        assert len(page.data) == 1
+        seen.append(UUID(str(page.data[0].snapshot_id)))
+
+        if index < 2:
+            assert page.page.has_more
+            assert page.page.next_cursor is not None
+
+        cursor = page.page.next_cursor
+
+    assert len(set(seen)) == 3
+    assert seen == sorted(seen)
+    assert not page.page.has_more
+    assert page.page.next_cursor is None
 
 
 def test_m3_result_hash_uses_persisted_canonical_values(migrated_database) -> None:

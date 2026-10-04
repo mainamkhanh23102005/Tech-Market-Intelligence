@@ -9,6 +9,8 @@ from tech_market_api.market import MarketNotFoundError, get_market_reader
 from tech_market_contracts import (
     EvidenceDetail,
     JobPage,
+    JobSearchPage,
+    JobSearchResult,
     JobSummary,
     MarketPage,
     MarketStatisticResponse,
@@ -98,6 +100,21 @@ class Reader:
 
     def jobs(self, snapshot: UUID, cursor: UUID | None, limit: int) -> JobPage:
         return JobPage(data=[self.job], page=PageInfo(next_cursor=None, has_more=False))
+
+    def search_jobs(
+        self, corpus_snapshot_id: UUID, analytics_run_id: UUID, **kwargs
+    ) -> JobSearchPage:
+        return JobSearchPage(
+            corpus_snapshot_id=str(corpus_snapshot_id),
+            analytics_run_id=str(analytics_run_id),
+            data=[
+                JobSearchResult(
+                    **self.job.model_dump(),
+                    evidence_url=f"/api/v1/evidence/{EVIDENCE}?snapshot={corpus_snapshot_id}",
+                )
+            ],
+            page=PageInfo(next_cursor=None, has_more=False),
+        )
 
     def evidence(self, snapshot: UUID, snapshot_id: UUID) -> EvidenceDetail:
         if snapshot != SNAPSHOT or snapshot_id != EVIDENCE:
@@ -202,6 +219,56 @@ def test_validation_and_not_found_errors_use_structured_envelope() -> None:
 def test_page_limit_is_bounded() -> None:
     response = client().get(f"/api/v1/jobs?snapshot={SNAPSHOT}&limit=101")
     assert response.status_code == 422
+
+
+def test_structured_search_returns_snapshot_pinned_evidence_without_snippets() -> None:
+    response = client().get(
+        f"/api/v1/jobs/search?snapshot={SNAPSHOT}&analytics_run_id={RUN}&role=backend_engineer&skill=python"
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["corpus_snapshot_id"] == str(SNAPSHOT)
+    assert payload["analytics_run_id"] == str(RUN)
+    assert payload["data"][0]["evidence_url"] == f"/api/v1/evidence/{EVIDENCE}?snapshot={SNAPSHOT}"
+    assert "description" not in payload["data"][0]
+
+
+def test_structured_search_rejects_empty_malformed_filters_and_unbounded_page() -> None:
+    base = f"/api/v1/jobs/search?snapshot={SNAPSHOT}&analytics_run_id={RUN}"
+    for suffix in (
+        "&query=%20%20",
+        "&role=%20%20",
+        "&seniority=%20%20",
+        "&location=%20%20",
+        "&observed_from=not-a-date",
+        "&limit=101",
+        "&skill=",
+        "&skill=python&skill=%20python%20",
+    ):
+        response = client().get(base + suffix)
+        assert response.status_code == 422
+        assert response.json()["error"]["request_id"]
+
+
+def test_structured_search_rejects_naive_datetime_bounds() -> None:
+    base = f"/api/v1/jobs/search?snapshot={SNAPSHOT}&analytics_run_id={RUN}"
+    for suffix in (
+        "&observed_from=2026-09-20T00:00:00",
+        "&observed_to=2026-09-20T00:00:00",
+        "&observed_from=2026-09-20T00:00:00&observed_to=2026-09-21T00:00:00Z",
+    ):
+        response = client().get(base + suffix)
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "FILTER_INVALID"
+
+
+def test_structured_search_rejects_reversed_date_range() -> None:
+    response = client().get(
+        f"/api/v1/jobs/search?snapshot={SNAPSHOT}&analytics_run_id={RUN}"
+        "&observed_from=2026-09-21T00:00:00Z&observed_to=2026-09-20T00:00:00Z"
+    )
+    assert response.status_code == 422
+    assert response.json()["error"]["code"] == "FILTER_INVALID"
 
 
 def test_source_url_rejects_unsafe_scheme() -> None:

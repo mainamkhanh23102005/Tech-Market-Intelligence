@@ -1,3 +1,8 @@
+import base64
+import binascii
+import hashlib
+import json
+from datetime import datetime
 from urllib.parse import urlsplit
 from uuid import UUID
 
@@ -7,6 +12,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from tech_market_backend.analytics.registry import METRICS
 from tech_market_backend.platform.models import (
     AnalyticsRun,
+    AnalyticsRunMember,
     CorpusSnapshot,
     CorpusSnapshotMember,
     Job,
@@ -17,6 +23,8 @@ from tech_market_backend.platform.models import (
 from tech_market_contracts import (
     EvidenceDetail,
     JobPage,
+    JobSearchPage,
+    JobSearchResult,
     JobSummary,
     MarketPage,
     MarketStatisticResponse,
@@ -136,6 +144,149 @@ class PostgresMarketReader:
                     has_more=len(rows) > limit,
                     next_cursor=str(rows[limit - 1][1].id) if len(rows) > limit else None,
                 ),
+            )
+
+    def search_jobs(
+        self,
+        corpus_snapshot_id: UUID,
+        analytics_run_id: UUID,
+        *,
+        query: str | None,
+        role: str | None,
+        seniority: str | None,
+        location: str | None,
+        skills: list[str],
+        observed_from: datetime | None,
+        observed_to: datetime | None,
+        cursor: str | None,
+        limit: int,
+    ) -> JobSearchPage:
+        filters: dict[str, object] = {
+            "query": query,
+            "role": role,
+            "seniority": seniority,
+            "location": location,
+            "skills": sorted(skills),
+            "observed_from": observed_from.isoformat() if observed_from else None,
+            "observed_to": observed_to.isoformat() if observed_to else None,
+            "limit": limit,
+        }
+        scope = hashlib.sha256(
+            json.dumps(
+                [str(corpus_snapshot_id), str(analytics_run_id), filters],
+                sort_keys=True,
+                separators=(",", ":"),
+            ).encode()
+        ).hexdigest()
+        position: tuple[datetime, UUID] | None = None
+        if cursor is not None:
+            try:
+                payload = json.loads(base64.urlsafe_b64decode(cursor + "=" * (-len(cursor) % 4)))
+                if payload["scope"] != scope:
+                    raise ValueError
+                position = (
+                    datetime.fromisoformat(payload["observed_at"]),
+                    UUID(payload["snapshot_id"]),
+                )
+            except (
+                ValueError,
+                KeyError,
+                TypeError,
+                IndexError,
+                AttributeError,
+                binascii.Error,
+                UnicodeDecodeError,
+                json.JSONDecodeError,
+            ) as error:
+                raise MarketNotFoundError(
+                    "CURSOR_INVALID", "Search cursor is invalid for this request"
+                ) from error
+        with self.sessions() as session:
+            corpus = session.get(CorpusSnapshot, corpus_snapshot_id)
+            run = session.get(AnalyticsRun, analytics_run_id)
+            if corpus is None:
+                raise MarketNotFoundError("SNAPSHOT_NOT_FOUND", "Corpus snapshot was not found")
+            if (
+                run is None
+                or run.status != "SUCCEEDED"
+                or run.corpus_snapshot_id != corpus_snapshot_id
+            ):
+                raise MarketNotFoundError(
+                    "RUN_NOT_FOUND", "Compatible successful analytics run was not found"
+                )
+            statement = (
+                select(AnalyticsRunMember, Job, JobSnapshot)
+                .join(Job, Job.id == AnalyticsRunMember.job_id)
+                .join(
+                    JobSnapshot,
+                    and_(
+                        JobSnapshot.id == AnalyticsRunMember.job_snapshot_id,
+                        JobSnapshot.job_id == AnalyticsRunMember.job_id,
+                    ),
+                )
+                .where(AnalyticsRunMember.analytics_run_id == analytics_run_id)
+            )
+            if query:
+                pattern = "%" + query.replace("%", "\\%").replace("_", "\\_") + "%"
+                statement = statement.where(
+                    or_(
+                        JobSnapshot.title.ilike(pattern, escape="\\"),
+                        JobSnapshot.company.ilike(pattern, escape="\\"),
+                    )
+                )
+            if role is not None:
+                statement = statement.where(AnalyticsRunMember.role == role)
+            if seniority is not None:
+                statement = statement.where(AnalyticsRunMember.seniority == seniority)
+            if location is not None:
+                statement = statement.where(AnalyticsRunMember.location == location)
+            if skills:
+                statement = statement.where(AnalyticsRunMember.skills.contains(sorted(skills)))
+            if observed_from is not None:
+                statement = statement.where(JobSnapshot.observed_at >= observed_from)
+            if observed_to is not None:
+                statement = statement.where(JobSnapshot.observed_at <= observed_to)
+            if position is not None:
+                observed_at, snapshot_id = position
+                statement = statement.where(
+                    or_(
+                        JobSnapshot.observed_at < observed_at,
+                        and_(JobSnapshot.observed_at == observed_at, JobSnapshot.id > snapshot_id),
+                    )
+                )
+            rows = list(
+                session.execute(
+                    statement.order_by(JobSnapshot.observed_at.desc(), JobSnapshot.id).limit(
+                        limit + 1
+                    )
+                )
+            )
+            results = [
+                JobSearchResult(
+                    **self._job(job, snapshot).model_dump(),
+                    evidence_url=f"/api/v1/evidence/{snapshot.id}?snapshot={corpus_snapshot_id}",
+                )
+                for _, job, snapshot in rows[:limit]
+            ]
+            has_more = len(rows) > limit
+            next_cursor = None
+            if has_more and rows:
+                member, _, snapshot = rows[limit - 1]
+                body = json.dumps(
+                    {
+                        "scope": scope,
+                        "observed_at": snapshot.observed_at.isoformat(),
+                        "snapshot_id": str(snapshot.id),
+                    },
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode()
+                next_cursor = base64.urlsafe_b64encode(body).decode().rstrip("=")
+            return JobSearchPage(
+                corpus_snapshot_id=str(corpus_snapshot_id),
+                analytics_run_id=str(analytics_run_id),
+                data=results,
+                page=PageInfo(has_more=has_more, next_cursor=next_cursor),
             )
 
     def evidence(self, corpus_snapshot: UUID, snapshot_id: UUID) -> EvidenceDetail:

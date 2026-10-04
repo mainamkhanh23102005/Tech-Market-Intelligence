@@ -7,7 +7,12 @@ from pydantic import BaseModel, ConfigDict
 from tech_market_backend.platform.database import create_database_engine, session_factory
 
 from tech_market_api.config import load_settings
-from tech_market_api.market import MarketNotFoundError, get_market_reader, routes
+from tech_market_api.market import (
+    MarketNotFoundError,
+    MarketValidationError,
+    get_market_reader,
+    routes,
+)
 from tech_market_api.postgres_reader import PostgresMarketReader
 
 
@@ -29,6 +34,20 @@ def create_app() -> FastAPI:
     async def market_not_found(_: Request, error: MarketNotFoundError) -> JSONResponse:
         return JSONResponse(
             status_code=404,
+            content={
+                "error": {
+                    "code": error.code,
+                    "message": error.message,
+                    "details": None,
+                    "request_id": str(uuid4()),
+                }
+            },
+        )
+
+    @app.exception_handler(MarketValidationError)
+    async def market_validation_error(_: Request, error: MarketValidationError) -> JSONResponse:
+        return JSONResponse(
+            status_code=422,
             content={
                 "error": {
                     "code": error.code,

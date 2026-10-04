@@ -65,3 +65,16 @@ class EvidenceDetail(BaseModel):
     description: str
     source_url: HttpUrl | None
     raw_record_hash: str
+
+
+class JobSearchResult(JobSummary):
+    evidence_url: str
+
+
+class JobSearchPage(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    corpus_snapshot_id: str
+    analytics_run_id: str
+    data: list[JobSearchResult]
+    page: PageInfo

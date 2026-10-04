@@ -1,6 +1,8 @@
+import base64
+import json
 import os
 from dataclasses import replace
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from uuid import UUID, uuid4
 
@@ -1079,3 +1081,404 @@ def test_m3_rejects_metric_definition_content_mismatch(migrated_database) -> Non
         record = session.get(MetricDefinitionRecord, ("skill_prevalence", "skill-prevalence-1.0.0"))
         assert record is not None
         assert record.formula == "tampered formula"
+
+
+def _m42_publish(sessions):
+    run_id = AnalyticsPersistence(sessions).publish(datetime.now(UTC), _versions())
+    with sessions() as session:
+        corpus_id = session.get(AnalyticsRun, run_id).corpus_snapshot_id
+    return corpus_id, run_id
+
+
+def _m42_search(reader, corpus_id, run_id, **overrides):
+    options = dict(
+        mode="lexical",
+        query="cpp",
+        role=None,
+        seniority=None,
+        location=None,
+        skills=[],
+        observed_from=None,
+        observed_to=None,
+        cursor=None,
+        limit=20,
+    )
+    options.update(overrides)
+    return reader.search_jobs(corpus_id, run_id, **options)
+
+
+def _m42_cursor(payload):
+    return base64.urlsafe_b64encode(json.dumps(payload).encode()).decode().rstrip("=")
+
+
+def test_m42_all_field_weights_rank_before_time_and_paginate_without_gaps(migrated_database):
+    _, sessions = migrated_database
+    fields = [
+        ("cpp", "neutral", "Example"),
+        ("Engineer", "C++", "Example"),
+        ("Engineer", "neutral", "cpp"),
+        ("Engineer", "cpp", "Example"),
+    ]
+    ids = []
+    now = datetime.now(UTC) - timedelta(days=1)
+    for index, (title, description, company) in enumerate(fields):
+        snapshot_id = _job_row(sessions, title=title, description=description)
+        with sessions.begin() as session:
+            snapshot = session.get(JobSnapshot, snapshot_id)
+            snapshot.company = company
+            snapshot.observed_at = now + timedelta(hours=index)
+        TaxonomyService(sessions).normalize_snapshot(snapshot_id)
+        ids.append(snapshot_id)
+    corpus_id, run_id = _m42_publish(sessions)
+    reader = PostgresMarketReader(sessions)
+    full = _m42_search(reader, corpus_id, run_id)
+    assert [UUID(item.snapshot_id) for item in full.data] == ids
+    assert not full.page.has_more and full.page.next_cursor is None
+    with sessions() as session:
+        member = session.scalar(
+            select(AnalyticsRunMember).where(
+                AnalyticsRunMember.analytics_run_id == run_id,
+                AnalyticsRunMember.job_snapshot_id == ids[1],
+            )
+        )
+        assert member.skills == ["cpp"]
+    seen = []
+    cursor = None
+    for index in range(len(ids)):
+        page = _m42_search(reader, corpus_id, run_id, cursor=cursor, limit=1)
+        assert len(page.data) == 1
+        seen.append(UUID(page.data[0].snapshot_id))
+        assert page.page.has_more == (index < len(ids) - 1)
+        assert (page.page.next_cursor is not None) == page.page.has_more
+        cursor = page.page.next_cursor
+    assert seen == ids and len(set(seen)) == len(ids)
+    empty = _m42_search(reader, corpus_id, run_id, query="unfindablequartz")
+    assert empty.data == []
+    assert not empty.page.has_more and empty.page.next_cursor is None
+
+
+def test_m42_equal_rank_orders_time_then_uuid_on_every_page(migrated_database):
+    _, sessions = migrated_database
+    now = datetime.now(UTC) - timedelta(days=1)
+    ids = [_job_row(sessions, title="cpp", description="neutral") for _ in range(5)]
+    times = [now, now, now + timedelta(hours=1), now, now - timedelta(hours=1)]
+    with sessions.begin() as session:
+        for snapshot_id, observed_at in zip(ids, times, strict=True):
+            session.get(JobSnapshot, snapshot_id).observed_at = observed_at
+    TaxonomyPersistence(sessions).seed(CATALOG_VERSION, SKILLS)
+    corpus_id, run_id = _m42_publish(sessions)
+    reader = PostgresMarketReader(sessions)
+    expected = [ids[2], *sorted(ids[:2] + [ids[3]]), ids[4]]
+    assert [
+        UUID(item.snapshot_id) for item in _m42_search(reader, corpus_id, run_id).data
+    ] == expected
+    for limit in (1, 2, 3):
+        seen, cursor = [], None
+        for _ in range(len(ids)):
+            page = _m42_search(reader, corpus_id, run_id, limit=limit, cursor=cursor)
+            seen.extend(UUID(item.snapshot_id) for item in page.data)
+            if not page.page.has_more:
+                assert page.page.next_cursor is None
+                break
+            assert len(page.data) == limit and page.page.next_cursor is not None
+            cursor = page.page.next_cursor
+        else:
+            pytest.fail("Lexical pagination did not terminate")
+        assert seen == expected and len(set(seen)) == len(ids)
+
+
+def test_m42_cursor_binds_every_scope_and_validates_anchor(migrated_database):
+    _, sessions = migrated_database
+    ids = [
+        _job_row(
+            sessions,
+            title="Senior Backend Engineer cpp",
+            description="Python AWS",
+            location="London, UK",
+        )
+        for _ in range(3)
+    ]
+    for snapshot_id in ids:
+        TaxonomyService(sessions).normalize_snapshot(snapshot_id)
+    data_snapshot = _job_row(sessions, title="Data Engineer", description="neutral")
+    TaxonomyService(sessions).normalize_snapshot(data_snapshot)
+    corpus_id, run_id = _m42_publish(sessions)
+    reader = PostgresMarketReader(sessions)
+    first = _m42_search(reader, corpus_id, run_id, limit=1)
+    cursor = first.page.next_cursor
+    assert cursor is not None
+    with sessions() as session:
+        cutoff = session.get(CorpusSnapshot, corpus_id).source_cutoff
+    second_run = AnalyticsPersistence(sessions).publish(
+        cutoff, _versions(), ("backend_engineer", "data_engineer")
+    )
+    with sessions() as session:
+        assert session.get(AnalyticsRun, second_run).corpus_snapshot_id == corpus_id
+    assert second_run != run_id
+    second_corpus = AnalyticsPersistence(sessions).create_corpus_snapshot(datetime.now(UTC))
+    changes = [
+        dict(query="CPP"),
+        dict(mode="structured"),
+        dict(role="backend_engineer"),
+        dict(seniority="senior"),
+        dict(location="London"),
+        dict(skills=["python"]),
+        dict(observed_from=datetime(2020, 1, 1, tzinfo=UTC)),
+        dict(observed_to=datetime.now(UTC)),
+        dict(limit=2),
+    ]
+    for changeset in changes:
+        with pytest.raises(MarketNotFoundError, match="Search cursor is invalid"):
+            _m42_search(reader, corpus_id, run_id, cursor=cursor, **{"limit": 1, **changeset})
+    for corpus, run in ((corpus_id, second_run), (second_corpus, run_id)):
+        with pytest.raises(MarketNotFoundError, match="Search cursor is invalid"):
+            _m42_search(reader, corpus, run, cursor=cursor, limit=1)
+    foreign = _job_row(sessions, title="cpp", description="outside published corpus")
+    nonmatch = _job_row(sessions, title="unrelated", description="neutral")
+    TaxonomyService(sessions).normalize_snapshot(nonmatch)
+    newer_corpus, newer_run = _m42_publish(sessions)
+    newer_page = _m42_search(reader, newer_corpus, newer_run, limit=1)
+    payload = json.loads(base64.urlsafe_b64decode(cursor + "=" * (-len(cursor) % 4)))
+    with sessions() as session:
+        foreign_time = session.get(JobSnapshot, foreign).observed_at.isoformat()
+        nonmatch_time = session.get(JobSnapshot, nonmatch).observed_at.isoformat()
+    forged = [
+        dict(snapshot_id=str(uuid4())),
+        dict(snapshot_id="not-uuid"),
+        dict(observed_at="not-time"),
+        dict(observed_at="2026-01-01T00:00:00"),
+        dict(
+            observed_at=(
+                datetime.fromisoformat(payload["observed_at"]) + timedelta(seconds=1)
+            ).isoformat()
+        ),
+        dict(snapshot_id=str(foreign), observed_at=foreign_time),
+    ]
+    for change in forged:
+        with pytest.raises(MarketNotFoundError, match="Search cursor is invalid"):
+            _m42_search(
+                reader, corpus_id, run_id, cursor=_m42_cursor({**payload, **change}), limit=1
+            )
+    newer_payload = json.loads(
+        base64.urlsafe_b64decode(
+            newer_page.page.next_cursor + "=" * (-len(newer_page.page.next_cursor) % 4)
+        )
+    )
+    with pytest.raises(MarketNotFoundError, match="Search cursor is invalid"):
+        _m42_search(
+            reader,
+            newer_corpus,
+            newer_run,
+            limit=1,
+            cursor=_m42_cursor(
+                {**newer_payload, "snapshot_id": str(nonmatch), "observed_at": nonmatch_time}
+            ),
+        )
+    for malformed in ("!", "e30", _m42_cursor([]), _m42_cursor(None), "_w"):
+        with pytest.raises(MarketNotFoundError, match="Search cursor is invalid"):
+            _m42_search(reader, corpus_id, run_id, cursor=malformed, limit=1)
+    scoped = _m42_search(reader, corpus_id, run_id, skills=["python", "aws"], limit=1)
+    assert _m42_search(
+        reader, corpus_id, run_id, skills=["aws", "python"], limit=1, cursor=scoped.page.next_cursor
+    ).data
+
+
+def test_m42_composes_all_filters_with_independent_distractors(migrated_database):
+    _, sessions = migrated_database
+    boundary = datetime.now(UTC) - timedelta(days=1)
+    cases = [
+        ("Senior Backend Engineer cpp", "Python AWS", "London, UK", boundary),
+        ("Senior Data Engineer cpp", "Python AWS", "London, UK", boundary),
+        ("Junior Backend Engineer cpp", "Python AWS", "London, UK", boundary),
+        ("Senior Backend Engineer cpp", "Python AWS", "Hanoi, Vietnam", boundary),
+        ("Senior Backend Engineer cpp", "AWS", "London, UK", boundary),
+        ("Senior Backend Engineer cpp", "Python", "London, UK", boundary),
+        (
+            "Senior Backend Engineer cpp",
+            "Python AWS",
+            "London, UK",
+            boundary - timedelta(seconds=1),
+        ),
+        (
+            "Senior Backend Engineer cpp",
+            "Python AWS",
+            "London, UK",
+            boundary + timedelta(seconds=1),
+        ),
+        ("Senior Backend Engineer", "Python AWS", "London, UK", boundary),
+    ]
+    ids = []
+    for title, description, location, observed_at in cases:
+        snapshot_id = _job_row(sessions, title=title, description=description, location=location)
+        with sessions.begin() as session:
+            session.get(JobSnapshot, snapshot_id).observed_at = observed_at
+        TaxonomyService(sessions).normalize_snapshot(snapshot_id)
+        ids.append(snapshot_id)
+    corpus_id, run_id = _m42_publish(sessions)
+    reader = PostgresMarketReader(sessions)
+    filters = dict(
+        role="backend_engineer",
+        seniority="senior",
+        location="London",
+        skills=["python", "aws"],
+        observed_from=boundary,
+        observed_to=boundary,
+    )
+    page = _m42_search(reader, corpus_id, run_id, **filters)
+    assert [UUID(item.snapshot_id) for item in page.data] == [ids[0]]
+    assert not page.page.has_more
+    for name, distractor in (
+        ("role", 1),
+        ("seniority", 2),
+        ("location", 3),
+        ("observed_from", 6),
+        ("observed_to", 7),
+    ):
+        relaxed = _m42_search(reader, corpus_id, run_id, **{**filters, name: None})
+        assert {UUID(item.snapshot_id) for item in relaxed.data} == {ids[0], ids[distractor]}
+    for skills, distractor in ((["aws"], 4), (["python"], 5)):
+        relaxed = _m42_search(reader, corpus_id, run_id, **{**filters, "skills": skills})
+        assert {UUID(item.snapshot_id) for item in relaxed.data} == {ids[0], ids[distractor]}
+
+
+def test_m42_frozen_skills_and_replacement_snapshot_keep_evidence_pinned(migrated_database):
+    _, sessions = migrated_database
+    original = _job_row(sessions, title="Backend Engineer", description="C++ original evidence")
+    normalization_id = TaxonomyService(sessions).normalize_snapshot(original).normalization_id
+    corpus_id, run_id = _m42_publish(sessions)
+    reader = PostgresMarketReader(sessions)
+    before = _m42_search(reader, corpus_id, run_id)
+    assert [item.snapshot_id for item in before.data] == [str(original)]
+    with sessions.begin() as session:
+        normalization = session.get(SnapshotNormalization, normalization_id)
+        normalization.role = "data_engineer"
+        skill = session.scalar(
+            select(JobSkill).where(JobSkill.normalization_id == normalization_id)
+        )
+        skill.reviewed_state = "rejected"
+    changed_run = AnalyticsPersistence(sessions).publish(datetime.now(UTC), _versions())
+    with sessions() as session:
+        changed_corpus = session.get(AnalyticsRun, changed_run).corpus_snapshot_id
+        frozen = session.scalar(
+            select(AnalyticsRunMember).where(
+                AnalyticsRunMember.analytics_run_id == run_id,
+                AnalyticsRunMember.job_snapshot_id == original,
+            )
+        )
+        assert frozen.skills == ["cpp"] and frozen.role == "backend_engineer"
+    assert _m42_search(reader, corpus_id, run_id).model_dump() == before.model_dump()
+    assert _m42_search(reader, changed_corpus, changed_run).data == []
+    replacement = uuid4()
+    with sessions.begin() as session:
+        old = session.get(JobSnapshot, original)
+        session.add(
+            JobSnapshot(
+                id=replacement,
+                job_id=old.job_id,
+                raw_record_id=old.raw_record_id,
+                content_hash="b" * 64,
+                processor_version=old.processor_version,
+                title="Replacement AWS",
+                company=old.company,
+                location=old.location,
+                description="replacement only evidence",
+                observed_at=datetime.now(UTC),
+            )
+        )
+    TaxonomyService(sessions).normalize_snapshot(replacement)
+    latest_corpus, latest_run = _m42_publish(sessions)
+    assert _m42_search(reader, latest_corpus, latest_run).data == []
+    assert [
+        item.snapshot_id
+        for item in _m42_search(reader, latest_corpus, latest_run, query="AWS").data
+    ] == [str(replacement)]
+    app = create_app()
+    app.dependency_overrides[get_market_reader] = lambda: reader
+    with TestClient(app) as client:
+        params = dict(
+            snapshot=str(corpus_id), analytics_run_id=str(run_id), query="cpp", mode="lexical"
+        )
+        response = client.get("/api/v1/jobs/search", params=params)
+        assert response.status_code == 200
+        body = response.json()
+        assert body["corpus_snapshot_id"] == str(corpus_id)
+        assert body["analytics_run_id"] == str(run_id)
+        assert "description" not in body["data"][0]
+        assert "original evidence" not in response.text
+        url = body["data"][0]["evidence_url"]
+        assert url == f"/api/v1/evidence/{original}?snapshot={corpus_id}"
+        evidence = client.get(url)
+        assert evidence.status_code == 200
+        assert evidence.json()["description"] == "C++ original evidence"
+        assert evidence.json()["job"]["snapshot_id"] == str(original)
+        assert evidence.json()["raw_record_hash"] == "a" * 64
+        assert client.get(f"/api/v1/evidence/{replacement}?snapshot={corpus_id}").status_code == 404
+        assert (
+            client.get(f"/api/v1/evidence/{original}?snapshot={latest_corpus}").status_code == 404
+        )
+
+
+def test_m42_real_websearch_parser_simple_config_and_structured_default(migrated_database):
+    _, sessions = migrated_database
+    descriptions = [
+        "Python PostgreSQL AWS",
+        "Python AWS",
+        "PostgreSQL AWS",
+        "Python managed PostgreSQL",
+        "Node.js C++ .NET",
+        "running services",
+        "run service",
+        "drop table jobs",
+        "unrelated",
+    ]
+    ids = [_job_row(sessions, title="Engineer", description=value) for value in descriptions]
+    for snapshot_id in ids:
+        TaxonomyService(sessions).normalize_snapshot(snapshot_id)
+    corpus_id, run_id = _m42_publish(sessions)
+    reader = PostgresMarketReader(sessions)
+    cases = [
+        ("Python PostgreSQL", {0, 3}),
+        ("Python OR PostgreSQL", {0, 1, 2, 3}),
+        ("Python -PostgreSQL", {1}),
+        ('"Python PostgreSQL"', {0}),
+        ('"Python PostgreSQL', {0}),
+        ("Node.js", {4}),
+        ("C++", {4}),
+        (".NET", {4}),
+        ("Python", {0, 1, 3}),
+        ("PostgreSQL", {0, 2, 3}),
+        ("AWS", {0, 1, 2}),
+        ("running", {5}),
+        ("run", {6}),
+        ("!!!", set()),
+        ("'; DROP TABLE jobs; --", {7}),
+        ("' OR 1=1 --", set()),
+    ]
+    for query, indices in cases:
+        page = _m42_search(reader, corpus_id, run_id, query=query)
+        assert {item.snapshot_id for item in page.data} == {str(ids[index]) for index in indices}, (
+            query
+        )
+        assert not page.page.has_more and page.page.next_cursor is None
+    app = create_app()
+    app.dependency_overrides[get_market_reader] = lambda: reader
+    with TestClient(app) as client:
+        params = dict(snapshot=str(corpus_id), analytics_run_id=str(run_id), query="Python")
+        default = client.get("/api/v1/jobs/search", params=params)
+        structured = client.get("/api/v1/jobs/search", params={**params, "mode": "structured"})
+        lexical = client.get("/api/v1/jobs/search", params={**params, "mode": "lexical"})
+        assert default.status_code == structured.status_code == lexical.status_code == 200
+        assert default.json() == structured.json()
+        assert default.json()["data"] == []
+        assert {item["snapshot_id"] for item in lexical.json()["data"]} == {
+            str(ids[i]) for i in (0, 1, 3)
+        }
+        for query in (None, "", "   "):
+            invalid = {**params, "mode": "lexical"}
+            if query is None:
+                invalid.pop("query")
+            else:
+                invalid["query"] = query
+            assert client.get("/api/v1/jobs/search", params=invalid).status_code == 422
+    with sessions() as session:
+        assert session.scalar(select(func.count()).select_from(Job)) == len(ids)

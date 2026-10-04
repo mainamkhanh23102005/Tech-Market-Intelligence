@@ -271,6 +271,142 @@ def test_structured_search_rejects_reversed_date_range() -> None:
     assert response.json()["error"]["code"] == "FILTER_INVALID"
 
 
+def test_search_modes_forward_normalized_parameters() -> None:
+    requests: list[tuple[UUID, UUID, dict[str, object]]] = []
+
+    class CapturingReader(Reader):
+        def search_jobs(
+            self, corpus_snapshot_id: UUID, analytics_run_id: UUID, **kwargs: object
+        ) -> JobSearchPage:
+            requests.append((corpus_snapshot_id, analytics_run_id, kwargs))
+            return super().search_jobs(corpus_snapshot_id, analytics_run_id, **kwargs)
+
+    for mode in (None, "structured", "lexical"):
+        requests.clear()
+        app = create_app()
+        app.dependency_overrides[get_market_reader] = CapturingReader
+        params = [
+            ("snapshot", str(SNAPSHOT)),
+            ("analytics_run_id", str(RUN)),
+            ("query", '  "Python developer" OR SQL  '),
+            ("role", " backend_engineer "),
+            ("seniority", " senior "),
+            ("location", " remote "),
+            ("skill", " python "),
+            ("skill", " sql "),
+            ("observed_from", "2026-09-20T00:00:00Z"),
+            ("observed_to", "2026-09-21T00:00:00Z"),
+            ("cursor", "opaque-cursor"),
+            ("limit", "7"),
+        ]
+        if mode is not None:
+            params.append(("mode", mode))
+        response = TestClient(app).get("/api/v1/jobs/search", params=params)
+        assert response.status_code == 200
+        assert requests == [
+            (
+                SNAPSHOT,
+                RUN,
+                {
+                    "mode": mode or "structured",
+                    "query": '"Python developer" OR SQL',
+                    "role": "backend_engineer",
+                    "seniority": "senior",
+                    "location": "remote",
+                    "skills": ["python", "sql"],
+                    "observed_from": datetime(2026, 9, 20, tzinfo=UTC),
+                    "observed_to": datetime(2026, 9, 21, tzinfo=UTC),
+                    "cursor": "opaque-cursor",
+                    "limit": 7,
+                },
+            )
+        ]
+        assert "description" not in response.json()["data"][0]
+        assert "rank" not in response.json()["data"][0]
+
+
+def test_search_rejects_invalid_modes_before_reader() -> None:
+    app = create_app()
+
+    class RejectingReader(Reader):
+        def search_jobs(self, *args: object, **kwargs: object) -> JobSearchPage:
+            raise AssertionError("Invalid request reached reader")
+
+    app.dependency_overrides[get_market_reader] = RejectingReader
+    for mode in ("unknown", "LEXICAL", "", " lexical "):
+        response = TestClient(app).get(
+            "/api/v1/jobs/search",
+            params={
+                "snapshot": str(SNAPSHOT),
+                "analytics_run_id": str(RUN),
+                "query": "python",
+                "mode": mode,
+            },
+        )
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == "VALIDATION_ERROR"
+        assert response.json()["error"]["request_id"]
+
+
+def test_lexical_search_requires_nonblank_query_before_reader() -> None:
+    app = create_app()
+
+    class RejectingReader(Reader):
+        def search_jobs(self, *args: object, **kwargs: object) -> JobSearchPage:
+            raise AssertionError("Invalid request reached reader")
+
+    app.dependency_overrides[get_market_reader] = RejectingReader
+    for query in (None, "", " \t "):
+        params = {
+            "snapshot": str(SNAPSHOT),
+            "analytics_run_id": str(RUN),
+            "mode": "lexical",
+        }
+        if query is not None:
+            params["query"] = query
+        response = TestClient(app).get("/api/v1/jobs/search", params=params)
+        assert response.status_code == 422
+        assert response.json()["error"]["code"] == (
+            "VALIDATION_ERROR" if query == "" else "QUERY_INVALID"
+        )
+        assert response.json()["error"]["request_id"]
+
+
+def test_search_rejects_nul_text_before_reader() -> None:
+    app = create_app()
+
+    class RejectingReader(Reader):
+        def search_jobs(self, *args: object, **kwargs: object) -> JobSearchPage:
+            raise AssertionError("Invalid request reached reader")
+
+    app.dependency_overrides[get_market_reader] = RejectingReader
+    for mode in ("structured", "lexical"):
+        for field in ("query", "role", "seniority", "location", "skill"):
+            response = TestClient(app).get(
+                "/api/v1/jobs/search",
+                params={
+                    "snapshot": str(SNAPSHOT),
+                    "analytics_run_id": str(RUN),
+                    "mode": mode,
+                    "query": "python",
+                    field: "python\x00",
+                },
+            )
+            assert response.status_code == 422
+            assert response.json()["error"]["code"] == (
+                "QUERY_INVALID" if field == "query" else "FILTER_INVALID"
+            )
+            assert response.json()["error"]["request_id"]
+
+
+def test_search_default_matches_explicit_structured_without_query() -> None:
+    base = f"/api/v1/jobs/search?snapshot={SNAPSHOT}&analytics_run_id={RUN}"
+    default = client().get(base)
+    structured = client().get(base + "&mode=structured")
+    assert default.status_code == structured.status_code == 200
+    assert default.json() == structured.json()
+
+
 def test_source_url_rejects_unsafe_scheme() -> None:
     import pytest
     from pydantic import ValidationError

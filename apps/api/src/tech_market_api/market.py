@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 from datetime import datetime
-from typing import Annotated, Protocol
+from typing import Annotated, Literal, Protocol
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -40,6 +40,7 @@ class MarketReader(Protocol):
         corpus_snapshot_id: UUID,
         analytics_run_id: UUID,
         *,
+        mode: Literal["structured", "lexical"] = "structured",
         query: str | None,
         role: str | None,
         seniority: str | None,
@@ -122,6 +123,7 @@ def routes() -> Sequence[APIRouter]:
     def search_jobs(
         snapshot: UUID,
         analytics_run_id: UUID,
+        mode: Literal["structured", "lexical"] = "structured",
         query: Annotated[str | None, Query(min_length=1, max_length=200)] = None,
         role: Annotated[str | None, Query(min_length=1, max_length=128)] = None,
         seniority: Annotated[str | None, Query(min_length=1, max_length=128)] = None,
@@ -139,22 +141,29 @@ def routes() -> Sequence[APIRouter]:
         normalized_location = location.strip() if location is not None else None
         normalized_skills = [value.strip() for value in skill] if skill is not None else []
 
-        if normalized_query == "":
+        if (
+            normalized_query == ""
+            or (normalized_query is not None and "\x00" in normalized_query)
+            or (mode == "lexical" and normalized_query is None)
+        ):
             raise MarketValidationError(
-                "QUERY_INVALID", "Search query must contain non-whitespace text"
+                "QUERY_INVALID", "Search query must contain non-whitespace text without NUL bytes"
             )
         if any(
-            value == ""
+            value == "" or "\x00" in value
             for value in (normalized_role, normalized_seniority, normalized_location)
             if value is not None
         ):
             raise MarketValidationError(
-                "FILTER_INVALID", "Structured filters must contain non-whitespace text"
+                "FILTER_INVALID",
+                "Structured filters must contain non-whitespace text without NUL bytes",
             )
         if len(set(normalized_skills)) != len(normalized_skills) or any(
-            not value for value in normalized_skills
+            not value or "\x00" in value for value in normalized_skills
         ):
-            raise MarketValidationError("FILTER_INVALID", "Skills must be non-empty and unique")
+            raise MarketValidationError(
+                "FILTER_INVALID", "Skills must be non-empty, unique, and contain no NUL bytes"
+            )
 
         for name, value in (
             ("observed_from", observed_from),
@@ -173,6 +182,7 @@ def routes() -> Sequence[APIRouter]:
         return reader.search_jobs(
             snapshot,
             analytics_run_id,
+            mode=mode,
             query=normalized_query,
             role=normalized_role,
             seniority=normalized_seniority,

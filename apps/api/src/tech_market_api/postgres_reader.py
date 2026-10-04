@@ -3,11 +3,13 @@ import binascii
 import hashlib
 import json
 from datetime import datetime
+from typing import Literal
 from urllib.parse import urlsplit
 from uuid import UUID
 
 from pydantic import HttpUrl
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, cast, func, literal, literal_column, or_, select
+from sqlalchemy.dialects.postgresql import JSONB, REGCONFIG
 from sqlalchemy.orm import Session, sessionmaker
 from tech_market_backend.analytics.registry import METRICS
 from tech_market_backend.platform.models import (
@@ -32,7 +34,7 @@ from tech_market_contracts import (
     VersionTuple,
 )
 
-from tech_market_api.market import MarketNotFoundError
+from tech_market_api.market import MarketNotFoundError, MarketValidationError
 
 
 class PostgresMarketReader:
@@ -151,6 +153,7 @@ class PostgresMarketReader:
         corpus_snapshot_id: UUID,
         analytics_run_id: UUID,
         *,
+        mode: Literal["structured", "lexical"] = "structured",
         query: str | None,
         role: str | None,
         seniority: str | None,
@@ -161,6 +164,10 @@ class PostgresMarketReader:
         cursor: str | None,
         limit: int,
     ) -> JobSearchPage:
+        if mode == "lexical" and (query is None or not query.strip() or "\x00" in query):
+            raise MarketValidationError(
+                "QUERY_INVALID", "Search query must contain non-whitespace text without NUL bytes"
+            )
         filters: dict[str, object] = {
             "query": query,
             "role": role,
@@ -171,6 +178,8 @@ class PostgresMarketReader:
             "observed_to": observed_to.isoformat() if observed_to else None,
             "limit": limit,
         }
+        if mode == "lexical":
+            filters.update(mode=mode, version="lexical-v1")
         scope = hashlib.sha256(
             json.dumps(
                 [str(corpus_snapshot_id), str(analytics_run_id), filters],
@@ -188,6 +197,10 @@ class PostgresMarketReader:
                     datetime.fromisoformat(payload["observed_at"]),
                     UUID(payload["snapshot_id"]),
                 )
+                if mode == "lexical" and (
+                    position[0].tzinfo is None or position[0].utcoffset() is None
+                ):
+                    raise ValueError
             except (
                 ValueError,
                 KeyError,
@@ -226,7 +239,43 @@ class PostgresMarketReader:
                 )
                 .where(AnalyticsRunMember.analytics_run_id == analytics_run_id)
             )
-            if query:
+            rank = None
+            if mode == "lexical":
+                config = cast(literal("simple"), REGCONFIG)
+                vector = (
+                    func.setweight(
+                        func.to_tsvector(config, JobSnapshot.title), literal_column("'A'")
+                    )
+                    .op("||")(
+                        func.setweight(
+                            func.jsonb_to_tsvector(
+                                config, AnalyticsRunMember.skills, literal(["string"], type_=JSONB)
+                            ),
+                            literal_column("'B'"),
+                        )
+                    )
+                    .op("||")(
+                        func.setweight(
+                            func.to_tsvector(config, JobSnapshot.company), literal_column("'C'")
+                        )
+                    )
+                    .op("||")(
+                        func.setweight(
+                            func.to_tsvector(config, JobSnapshot.description), literal_column("'D'")
+                        )
+                    )
+                )
+                tsquery = func.websearch_to_tsquery(config, query)
+                rank = func.ts_rank_cd(vector, tsquery)
+                statement = statement.join(
+                    CorpusSnapshotMember,
+                    and_(
+                        CorpusSnapshotMember.corpus_snapshot_id == corpus_snapshot_id,
+                        CorpusSnapshotMember.job_id == AnalyticsRunMember.job_id,
+                        CorpusSnapshotMember.job_snapshot_id == AnalyticsRunMember.job_snapshot_id,
+                    ),
+                ).where(vector.bool_op("@@")(tsquery))
+            elif query:
                 pattern = "%" + query.replace("%", "\\%").replace("_", "\\_") + "%"
                 statement = statement.where(
                     or_(
@@ -248,12 +297,36 @@ class PostgresMarketReader:
                 statement = statement.where(JobSnapshot.observed_at <= observed_to)
             if position is not None:
                 observed_at, snapshot_id = position
-                statement = statement.where(
-                    or_(
-                        JobSnapshot.observed_at < observed_at,
-                        and_(JobSnapshot.observed_at == observed_at, JobSnapshot.id > snapshot_id),
-                    )
+                continuation = or_(
+                    JobSnapshot.observed_at < observed_at,
+                    and_(JobSnapshot.observed_at == observed_at, JobSnapshot.id > snapshot_id),
                 )
+                if rank is not None:
+                    anchor = statement.where(
+                        JobSnapshot.id == snapshot_id,
+                        JobSnapshot.observed_at == observed_at,
+                    )
+                    if (
+                        session.scalar(
+                            anchor.with_only_columns(JobSnapshot.id, maintain_column_froms=True)
+                        )
+                        is None
+                    ):
+                        raise MarketNotFoundError(
+                            "CURSOR_INVALID", "Search cursor is invalid for this request"
+                        )
+                    anchor_rank = (
+                        anchor.with_only_columns(rank, maintain_column_froms=True)
+                        .correlate(None)
+                        .scalar_subquery()
+                    )
+                    continuation = or_(
+                        rank < anchor_rank,
+                        and_(rank == anchor_rank, continuation),
+                    )
+                statement = statement.where(continuation)
+            if rank is not None:
+                statement = statement.order_by(rank.desc())
             rows = list(
                 session.execute(
                     statement.order_by(JobSnapshot.observed_at.desc(), JobSnapshot.id).limit(
